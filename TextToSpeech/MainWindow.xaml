@@ -1,0 +1,20 @@
+﻿<Window x:Class="TextToSpeech.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TextToSpeech"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <TabControl HorizontalAlignment="Left" Height="399" Margin="10,10,0,0" VerticalAlignment="Top" Width="772">
+            <TabItem Header="载入">
+                <local:LoadModuleControl/>
+            </TabItem>
+
+            <TabItem Header="其他功能">
+
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>

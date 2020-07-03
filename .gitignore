@@ -1,5 +1,4 @@
-.vs ipch 
+*.vs
 *.sdf 
 *.log
 *.temp
-/vendor
