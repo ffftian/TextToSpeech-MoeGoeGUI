@@ -1,0 +1,5 @@
+.vs ipch 
+*.sdf 
+*.log
+*.temp
+/vendor
