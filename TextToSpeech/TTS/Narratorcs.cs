@@ -93,12 +93,7 @@ public class Narrator
     }
 
 
-    public void SelectVoiceByHints()
-    {
-       // syn.SelectVoiceByHints()//特定性别语音//语音的位置就是数组
 
-
-    }
 
 
 }

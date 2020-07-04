@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Speech.Synthesis;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,8 +17,16 @@ namespace TextToSpeech
         public List<TextData> textDataList;
         public Narrator narratorcobj = new Narrator();
 
+        public List<VoiceInfo> voices = new List<VoiceInfo>();
+
+
         public TextData []QQArray;
         //输出格式直接按照ID输出，是谁就读对应的ID。
+
+        private string VoicePathData;
+        private string VoiceName;
+
+        public string[] VoiceNameArry;//尼玛的，这条数组用于读取名称，因为我不懂TM如何把object转成正常的string，用 VoiceName = box.SelectedValue.tostring();转出来会多些东西
 
         public LoadModuleControl()
         {
@@ -25,9 +34,14 @@ namespace TextToSpeech
 
 
             BrowseButton.Click += BrowseButtonClickCallback;
+            BrowseButton2.Click += BrowseButton2ClickCallback;
+
+            CreateVoice.Click += VoiceCreateTo;
+            PlayerVoice.Click += VoiceTestPlay;
 
             VoiceBox.MouseDown += BoxClick;
             PlayerBox.MouseDown += BoxClick;
+
 
 
             VoiceBox.SelectionChanged += BoxClick;
@@ -57,18 +71,36 @@ namespace TextToSpeech
            if( box.Name == VoiceBox.Name)
             {
                 VoiceBox.SelectedItem = box.SelectedValue;
+
+
+
+                VoiceName = VoiceNameArry[box.SelectedIndex];
+               // StreamReader rems = new StreamReader(box.SelectedValue);
+                // byte[] g = box.SelectedValue;
+
+                // VoiceName = box.SelectedValue;
+
+
+
+
             }
 
            if (box.Name == PlayerBox.Name)
             {
                 PlayerBox.SelectedItem = PlayerBox.SelectedValue;
 
+
             }
 
             String voice = VoiceBox.SelectedItem?.ToString();
             String player = PlayerBox.SelectedItem?.ToString();
+            if(voice?.Length > 0)
+            {
+                PlayerVoice.IsEnabled = true;
+            }
 
-            if (voice?.Length>0 && player?.Length>0 )
+
+            if (voice?.Length>0 && player?.Length>0&& VoicePathData?.Length>0)
             {
                 CreateVoice.IsEnabled = true;
             }
@@ -104,6 +136,40 @@ namespace TextToSpeech
 
            // 是否满足生成条件();
         }
+        private void BrowseButton2ClickCallback(object sender, RoutedEventArgs e)
+        {
+            #region 让玩家选择保存声音的路径
+            System.Windows.Forms.FolderBrowserDialog data = new System.Windows.Forms.FolderBrowserDialog();
+            VoicePathData = VoicePath.Text  = data.SelectedPath;
+            #endregion
+        }
+
+        private void VoiceCreateTo(object sender, RoutedEventArgs e)
+        {
+            //选择对应语音机
+            //narratorcobj.SelectVoice(VoiceName);
+            narratorcobj.synth.SelectVoice("Microsoft Lili");
+            //narratorcobj.synth.s;
+            //    var G =   narratorcobj.synth.GetInstalledVoices()[3];
+
+
+
+        }
+
+
+        private void VoiceTestPlay(object sender, RoutedEventArgs e)
+        {
+            //narratorcobj.SelectVoice(VoiceName);
+            narratorcobj.synth.SelectVoice(VoiceName);
+
+            //var G = voices[1];
+
+            // narratorcobj.synth.SelectVoiceByHints(G.Gender, G.Age,0,G.Culture);
+
+            narratorcobj.Narrate("12345");
+
+        }
+
 
         LinkedList<string> vs = new LinkedList<string>();
 
@@ -111,10 +177,26 @@ namespace TextToSpeech
         public void InitVoiceEngine()
         {
             VoiceBox.Items.Clear();
+            VoiceNameArry = new string[narratorcobj.synth.GetInstalledVoices().Count];
+
+
+            for(int a=0;a< narratorcobj.synth.GetInstalledVoices().Count; a++)
+            {
+                VoiceNameArry[a] = narratorcobj.synth.GetInstalledVoices()[a].VoiceInfo.Name;
+            }
+
+
             foreach (var voice in narratorcobj.synth.GetInstalledVoices())
             {
+                voices.Add(voice.VoiceInfo);
+
                 ComboBoxItem box = new ComboBoxItem();
+                // box.Content = voice.VoiceInfo.Name.Replace(" Desktop","");
                 box.Content = voice.VoiceInfo.Name;
+
+
+               // desktop
+
                 VoiceBox.Items.Add(box);
             }
         }
