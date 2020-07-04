@@ -92,7 +92,14 @@ public class Narrator
         synth.SetOutputToNull();
     }
 
+    public void ExportToWave(string path, string text,string DialogName)
+    {
+        synth.SetOutputToWaveFile(path);
+        
 
+        synth.Speak(text);
+        synth.SetOutputToNull();
+    }
 
 
 

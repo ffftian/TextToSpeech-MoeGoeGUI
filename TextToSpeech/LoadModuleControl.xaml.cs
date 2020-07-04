@@ -117,22 +117,27 @@ namespace TextToSpeech
 
             data.Filter = "(*.txt)|*.txt|All files (*.*)|*.*";
 
-            data.ShowDialog();
-            StreamReader streamReader = new StreamReader(data.OpenFile(), Encoding.UTF8);
-           string tempData = streamReader.ReadToEnd();
-            TextBox.Text = data.FileName;//取得名称并输入到界面上。
-            textDataList = TextTool.QQLogSplit(tempData);
-            #endregion
-
-            PlayerBox.Items.Clear();
-            //QQArray =  textDataList.Select(a => a.QQ).Distinct().ToArray();
-            QQArray = textDataList.DistinctBy(a => a.QQ).ToArray();
-            foreach (var QQData in QQArray)
+            //   data.ShowDialog();
+            if (data.ShowDialog() == System.Windows.Forms.DialogResult.OK)//用于指示让文件夹展开对文件选中才允许运行。
             {
-                ComboBoxItem box = new ComboBoxItem();
-                box.Content = $"{QQData.RoleName} ({ QQData.QQ})";
-                PlayerBox.Items.Add(box);
+                StreamReader streamReader = new StreamReader(data.OpenFile(), Encoding.UTF8);
+                string tempData = streamReader.ReadToEnd();
+                TextBox.Text = data.FileName;//取得名称并输入到界面上。
+                textDataList = TextTool.QQLogSplit(tempData);
+
+                #endregion
+
+                PlayerBox.Items.Clear();
+                //QQArray =  textDataList.Select(a => a.QQ).Distinct().ToArray();
+                QQArray = textDataList.DistinctBy(a => a.QQ).ToArray();
+                foreach (var QQData in QQArray)
+                {
+                    ComboBoxItem box = new ComboBoxItem();
+                    box.Content = $"{QQData.RoleName} ({ QQData.QQ})";
+                    PlayerBox.Items.Add(box);
+                }
             }
+            data.Dispose();
 
            // 是否满足生成条件();
         }
@@ -140,15 +145,26 @@ namespace TextToSpeech
         {
             #region 让玩家选择保存声音的路径
             System.Windows.Forms.FolderBrowserDialog data = new System.Windows.Forms.FolderBrowserDialog();
-            VoicePathData = VoicePath.Text  = data.SelectedPath;
+
+
+
+            if (data.ShowDialog() == System.Windows.Forms.DialogResult.OK)//用于指示让文件夹展开对文件筐。
+            {
+                VoicePathData = VoicePath.Text = data.SelectedPath;
+            }
+            data.Dispose();
             #endregion
         }
 
         private void VoiceCreateTo(object sender, RoutedEventArgs e)
         {
+            //创建语音名称，为ID
+          //  narratorcobj.c
+
+
             //选择对应语音机
             //narratorcobj.SelectVoice(VoiceName);
-            narratorcobj.synth.SelectVoice("Microsoft Lili");
+            //narratorcobj.synth.SelectVoice("Microsoft Lili");
             //narratorcobj.synth.s;
             //    var G =   narratorcobj.synth.GetInstalledVoices()[3];
 
@@ -166,7 +182,9 @@ namespace TextToSpeech
 
             // narratorcobj.synth.SelectVoiceByHints(G.Gender, G.Age,0,G.Culture);
 
-            narratorcobj.Narrate("12345");
+            // narratorcobj.Narrate("12345");
+            narratorcobj.ExportToWave(VoicePathData, "12345");
+
 
         }
 
