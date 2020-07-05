@@ -13,7 +13,7 @@
             </TabItem>
 
             <TabItem Header="其他功能">
-
+                <local:RecordControl/>
             </TabItem>
         </TabControl>
     </Grid>

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Speech.Synthesis;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -14,17 +15,18 @@ namespace TextToSpeech
     /// </summary>
     public partial class LoadModuleControl : UserControl
     {
-        public List<TextData> textDataList;
+        public List<TextData> textDataList;//存储所有文字的数据
         public Narrator narratorcobj = new Narrator();
 
         public List<VoiceInfo> voices = new List<VoiceInfo>();
 
 
-        public TextData []QQArray;
+        public TextData []QQArray;//存储所有的出场人
         //输出格式直接按照ID输出，是谁就读对应的ID。
 
-        private string VoicePathData;
+        private string VoicePath;
         private string VoiceName;
+        private string PlayerQQ;
 
         public string[] VoiceNameArry;//尼玛的，这条数组用于读取名称，因为我不懂TM如何把object转成正常的string，用 VoiceName = box.SelectedValue.tostring();转出来会多些东西
 
@@ -36,19 +38,16 @@ namespace TextToSpeech
             BrowseButton.Click += BrowseButtonClickCallback;
             BrowseButton2.Click += BrowseButton2ClickCallback;
 
-            CreateVoice.Click += VoiceCreateTo;
-            PlayerVoice.Click += VoiceTestPlay;
+            测试播放语音.Click += VoiceReciteTo;
+            生成对应语音.Click += PlayerVoiceButtonClick;
 
-            VoiceBox.MouseDown += BoxClick;
-            PlayerBox.MouseDown += BoxClick;
-
-
-
+            BrowseButton.Click += BoxClick;
+            BrowseButton2.Click += BoxClick;
             VoiceBox.SelectionChanged += BoxClick;
-            
-
-
             PlayerBox.SelectionChanged += BoxClick;
+
+
+
 
             InitVoiceEngine();
             // SelectBox.SelectionChanged += SeletInitButton;//点击下拉回调
@@ -66,43 +65,47 @@ namespace TextToSpeech
 
         private void BoxClick(object sender, RoutedEventArgs e)
         {
-           var box=  sender as ComboBox;
-
-           if( box.Name == VoiceBox.Name)
+            if (sender is ComboBox)
             {
-                VoiceBox.SelectedItem = box.SelectedValue;
+                ComboBox box = sender as ComboBox;
+                if (box.Name == VoiceBox.Name)
+                {
+                    VoiceBox.SelectedItem = box.SelectedValue;//这Value是TM的反射。
+
+                    // VoiceName = Convert.ToString(VoiceBox.SelectedItem);
+
+                    VoiceName = VoiceNameArry[box.SelectedIndex];
+                    // StreamReader rems = new StreamReader(box.SelectedValue);
+                    // byte[] g = box.SelectedValue;
+
+                    // VoiceName = box.SelectedValue;
+                }
+                if (box.Name == PlayerBox.Name)
+                {
+                    PlayerBox.SelectedItem = PlayerBox.SelectedValue;
+                    PlayerQQ = QQArray[PlayerBox.SelectedIndex].QQ;
+                    // PlayerQQ = Convert.ToInt32(PlayerBox.SelectedValue);
 
 
+                    //   PlayerID = PlayerBox.SelectedItem as int;
 
-                VoiceName = VoiceNameArry[box.SelectedIndex];
-               // StreamReader rems = new StreamReader(box.SelectedValue);
-                // byte[] g = box.SelectedValue;
-
-                // VoiceName = box.SelectedValue;
-
-
-
-
+                }
             }
 
-           if (box.Name == PlayerBox.Name)
-            {
-                PlayerBox.SelectedItem = PlayerBox.SelectedValue;
 
 
-            }
 
             String voice = VoiceBox.SelectedItem?.ToString();
             String player = PlayerBox.SelectedItem?.ToString();
             if(voice?.Length > 0)
             {
-                PlayerVoice.IsEnabled = true;
+                测试播放语音.IsEnabled = true;
             }
 
 
-            if (voice?.Length>0 && player?.Length>0&& VoicePathData?.Length>0)
+            if (voice?.Length>0 && player?.Length>0&& VoicePath?.Length>0)
             {
-                CreateVoice.IsEnabled = true;
+                生成对应语音.IsEnabled = true;
             }
 
         }
@@ -150,41 +153,67 @@ namespace TextToSpeech
 
             if (data.ShowDialog() == System.Windows.Forms.DialogResult.OK)//用于指示让文件夹展开对文件筐。
             {
-                VoicePathData = VoicePath.Text = data.SelectedPath;
+                VoicePath = VoicePathBox.Text = data.SelectedPath;
             }
             data.Dispose();
             #endregion
         }
 
-        private void VoiceCreateTo(object sender, RoutedEventArgs e)
+
+       
+
+        private void VoiceReciteTo(object sender, RoutedEventArgs e)
         {
-            //创建语音名称，为ID
-          //  narratorcobj.c
-
-
-            //选择对应语音机
-            //narratorcobj.SelectVoice(VoiceName);
-            //narratorcobj.synth.SelectVoice("Microsoft Lili");
-            //narratorcobj.synth.s;
-            //    var G =   narratorcobj.synth.GetInstalledVoices()[3];
-
+            narratorcobj.SelectVoice(VoiceName);
+            narratorcobj.synth.SpeakAsync("这里是对象朗读测试");
 
 
         }
 
-
-        private void VoiceTestPlay(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// 批量生产语音
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PlayerVoiceButtonClick(object sender, RoutedEventArgs e)
         {
             //narratorcobj.SelectVoice(VoiceName);
-            narratorcobj.synth.SelectVoice(VoiceName);
+            // narratorcobj.synth.SelectVoice(VoiceName);
+
+             VoiceProduction();
+
 
             //var G = voices[1];
 
-            // narratorcobj.synth.SelectVoiceByHints(G.Gender, G.Age,0,G.Culture);
 
-            // narratorcobj.Narrate("12345");
-            narratorcobj.ExportToWave(VoicePathData, "12345");
 
+            // narratorcobj.SaveToWave(VoicePath, "测试", "12345");
+
+            //narratorcobj.SaveToWave(VoicePath, "123", "12345");
+        }
+
+
+
+        public void VoiceProduction()
+        {
+            var SelectedLE = from r in textDataList where r.QQ == PlayerQQ select r;
+
+
+            narratorcobj.SelectVoice(VoiceName);
+
+            foreach (var item in SelectedLE)
+            {
+
+
+              var newID =   Regex.Replace(item.ID, "[: *?]","");//路径不支持的格式要自动和谐掉
+
+                //var 和谐 = item.ID.Replace(" ", "");
+
+                narratorcobj.SaveToWave(VoicePath, newID, item.Log);           
+            }
+
+
+            // SaveToWave()
 
         }
 

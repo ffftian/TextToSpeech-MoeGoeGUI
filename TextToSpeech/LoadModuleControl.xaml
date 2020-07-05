@@ -28,12 +28,12 @@
             <ComboBoxItem>示例3</ComboBoxItem>
         </ComboBox>
        
-        <TextBox Name="VoicePath" HorizontalAlignment="Left" FontSize="14" Margin="289,287,0,0"  TextWrapping="NoWrap" VerticalAlignment="Top" Width="407" IsEnabled="False"/>
+        <TextBox Name="VoicePathBox" HorizontalAlignment="Left" FontSize="14" Margin="289,287,0,0"  TextWrapping="NoWrap" VerticalAlignment="Top" Width="407" IsEnabled="False"/>
         <Button Name="BrowseButton2" Content="浏览" FontSize="14" Margin="701,287,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="42"/>
         <Label Content="生成语音位置" FontSize="14" HorizontalAlignment="Left" Margin="190,287,0,0" VerticalAlignment="Top"/>
-        
-        <Button Name="CreateVoice" Content="生成对应语音" HorizontalAlignment="Left" Margin="626,314,0,0" VerticalAlignment="Top" Width="117" Height="29" IsEnabled="False" />
-        <Button Name="PlayerVoice" Content="测试播放语音" HorizontalAlignment="Left" Margin="509,314,0,0" VerticalAlignment="Top" Width="117" Height="29" IsEnabled="False" />
+
+        <Button Name="生成对应语音" Content="生成对应语音" HorizontalAlignment="Left" Margin="626,314,0,0" VerticalAlignment="Top" Width="117" Height="29" IsEnabled="False" />
+        <Button Name="测试播放语音" Content="测试播放语音" HorizontalAlignment="Left" Margin="509,314,0,0" VerticalAlignment="Top" Width="117" Height="29" IsEnabled="False" />
 
 
 

@@ -38,3 +38,7 @@ E:\git项目\TTS\TextToSpeech\TextToSpeech\obj\Debug\TextToSpeech.Properties.Res
 E:\git项目\TTS\TextToSpeech\TextToSpeech\obj\Debug\TextToSpeech.csproj.GenerateResource.cache
 E:\git项目\TTS\TextToSpeech\TextToSpeech\obj\Debug\TextToSpeech.csproj.CoreCompileInputs.cache
 E:\git项目\TTS\TextToSpeech\TextToSpeech\obj\Debug\TextToSpeech.csprojAssemblyReference.cache
+C:\Users\ftianf\source\repos\TextToSpeech\TextToSpeech\obj\Debug\RecordControl.g.cs
+C:\Users\ftianf\source\repos\TextToSpeech\TextToSpeech\bin\Debug\NSpeex.dll
+C:\Users\ftianf\source\repos\TextToSpeech\TextToSpeech\obj\Debug\RecordControl.baml
+C:\Users\ftianf\source\repos\TextToSpeech\TextToSpeech\obj\Debug\TextToSpeech.csproj.CopyComplete

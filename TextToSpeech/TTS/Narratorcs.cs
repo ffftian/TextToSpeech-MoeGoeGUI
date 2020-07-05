@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Speech.AudioFormat;
 using System.Speech.Synthesis;
@@ -81,25 +82,42 @@ public class Narrator
     }
 
     /// <summary>
-    /// 生成声音并导出到文件
+    /// 生成声音并导出到指定格式文件上//疑似
     /// </summary>
     /// <param name="path">文件名地址</param>
     /// <param name="text">被朗读文本</param>
-    public void ExportToWave(string path, string text)
+    public void ExportToWave(string path, string WaveName, string text)
     {
-        synth.SetOutputToWaveFile(path);
+        synth.SetOutputToWaveFile(path + "//" + WaveName);
         synth.Speak(text);
         synth.SetOutputToNull();
     }
 
-    public void ExportToWave(string path, string text,string DialogName)
+
+    public void SaveToWave(string path, string WaveName, string text)
     {
-        synth.SetOutputToWaveFile(path);
+
+        //MemoryStream streamAudio = new MemoryStream()
+        FileStream stream = new FileStream(path+ "//"+WaveName+".wav", FileMode.Create);
+
+
+        synth.SetOutputToWaveStream(stream);
+        synth.Speak(text);
+        synth.SetOutputToNull();
+
+        stream.Dispose();
+    }
+
+
+
+    //public void ExportToWave(string path, string text,string DialogName)
+    //{
+    //    synth.SetOutputToWaveFile(path);
         
 
-        synth.Speak(text);
-        synth.SetOutputToNull();
-    }
+    //    synth.Speak(text);
+    //    synth.SetOutputToNull();
+    //}
 
 
 

@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NSpeex">
+      <HintPath>D:\gitClient\NAudio-master\Lib\NSpeex\NSpeex.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Speech" />
@@ -62,7 +65,11 @@
     <Compile Include="Page1.xaml.cs">
       <DependentUpon>Page1.xaml</DependentUpon>
     </Compile>
+    <Compile Include="RecordControl.xaml.cs">
+      <DependentUpon>RecordControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TextTTool\LinqTool.cs" />
+    <Compile Include="TextTTool\RegexTool.cs" />
     <Compile Include="TextTTool\TextData.cs" />
     <Compile Include="TextTTool\TextTool.cs" />
     <Compile Include="TTS\Narratorcs.cs" />
@@ -83,6 +90,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Page1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="RecordControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
