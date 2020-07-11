@@ -39,7 +39,7 @@
         <Button Name="生成指定语音" Content="生成指定语音" HorizontalAlignment="Left" Margin="617,313,0,0" VerticalAlignment="Top" Width="117" Height="29" IsEnabled="False" />
 
         <GroupBox Header="人工语音" HorizontalAlignment="Left" Height="225" Margin="0,445,0,0" VerticalAlignment="Top" Width="782"/>
-        <Button Name="开始录音" Content="开始录音" HorizontalAlignment="Left" Margin="509,490,0,0" VerticalAlignment="Top" Width="92" Height="35" IsEnabled="False"/>
+        <Button Name="开始录音" Content="开始录音" HorizontalAlignment="Left" Margin="509,490,0,0" VerticalAlignment="Top" Width="92" Height="35" />
         <Button Name="停止录音" Content="停止录音" HorizontalAlignment="Left" Margin="601,490,0,0" VerticalAlignment="Top" Width="92" Height="35" IsEnabled="False"/>
 
 
@@ -58,6 +58,7 @@
         
         <Label Content="语调更改" FontSize="14" HorizontalAlignment="Left" Margin="419,314,0,0" VerticalAlignment="Top"/>        
         <TextBox Name ="RateIuput" Text="0" FontSize="20" HorizontalAlignment="Left" Margin="500,313,0,0" VerticalAlignment="Top" Width="101"  HorizontalContentAlignment="Center" Height="29" />
+        <Button Name="SaveButton" Content="save" FontSize="14" Margin="692,392,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="42"/>
 
 
 

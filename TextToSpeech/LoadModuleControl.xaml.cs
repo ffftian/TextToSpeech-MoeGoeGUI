@@ -26,16 +26,57 @@ namespace TextToSpeech
         public TextData[] QQArray;//存储所有的出场人
         //输出格式直接按照ID输出，是谁就读对应的ID。
 
-        private string VoicePath;
-        private string VoiceName;
-        private string PlayerQQ;
+
+
+        private string LogPath { get { return TextBox.Text; }set { TextBox.Text = value; } }//文字地址
+        private string PlayerQQ ;//玩家名字
+        private string VoicePath { get { return VoicePathBox.Text; } set { VoicePathBox.Text = value; } }//语音地址
+        private string VoiceName;//语音名字
+
 
         unsafe int* 指针;
 
-        public string[] VoiceNameArry;//尼玛的，这条数组用于读取名称，因为我不懂TM如何把object转成正常的string，用 VoiceName = box.SelectedValue.tostring();转出来会多些东西
+        public string[] VoiceNameArry;//这条数组用于读取名称，因为我不懂TM如何把object转成正常的string，用 VoiceName = box.SelectedValue.tostring();转出来会多些东西，像是反射出的。
 
 
         public NAudioRecorder nAudio;//语音录制
+
+        const string 配置文件 = "/配置文件.txt";
+
+
+        public void InitData()
+        {
+            if (File.Exists(System.Windows.Forms.Application.StartupPath + 配置文件))
+            {
+                string[] G = File.ReadAllLines((System.Windows.Forms.Application.StartupPath + 配置文件));
+
+                LogPath = G[0];
+                PlayerQQ = G[1];
+                VoicePath = G[2];
+                VoiceName = G[3];
+
+
+                StreamReader streamReader = new StreamReader(LogPath, Encoding.UTF8);
+                string tempData = streamReader.ReadToEnd();
+                TextDispose(tempData);
+            }
+
+        }
+        public void SaveData()
+        {
+
+            string Conetents = $"{LogPath}\n{PlayerQQ}\n{VoicePath}\n{VoiceName}";
+            File.WriteAllText(System.Windows.Forms.Application.StartupPath + 配置文件, Conetents, Encoding.UTF8);
+
+        }
+        public void SaveClick(object sender, RoutedEventArgs e)
+        {
+            SaveData();
+        }
+
+
+
+
 
         public LoadModuleControl()
         {
@@ -43,7 +84,7 @@ namespace TextToSpeech
 
 
             InitializeComponent();
-
+            InitData();
 
             BrowseButton.Click += BrowseButtonClickCallback;
             BrowseButton2.Click += BrowseButton2ClickCallback;
@@ -71,8 +112,9 @@ namespace TextToSpeech
             Local_Left.Click += LocalLeftClick;
             Local_Right.Click += LocalRightClick;
             // Number. += ;
+            SaveButton.Click += SaveClick;
 
-            
+
 
         }
 
@@ -86,7 +128,7 @@ namespace TextToSpeech
             if ((Convert.ToInt32(Local_Number.Text) - 1) >= 0)
             {
                 Local_Number.Text = (Convert.ToInt32(Local_Number.Text) - 1).ToString();
-                处理显示Text(CurrentDataList, 局部显示文本,Local_Number, Local_ID);
+                处理显示Text(CurrentDataList, 局部显示文本, Local_Number, Local_ID);
             }
         }
         private void LocalRightClick(object sender, RoutedEventArgs e)
@@ -105,14 +147,14 @@ namespace TextToSpeech
         {
             // Number.COU
 
-           //  object i = 10;+
-           //  int* iptr = &i;
+            //  object i = 10;+
+            //  int* iptr = &i;
             //  指针 = *;
 
             if ((Convert.ToInt32(Number.Text) - 1) >= 0)
             {
                 Number.Text = (Convert.ToInt32(Number.Text) - 1).ToString();
-                处理显示Text(textDataList,显示文本,Number,ID);
+                处理显示Text(textDataList, 显示文本, Number, ID);
             }
         }
         private void RightClick(object sender, RoutedEventArgs e)
@@ -137,11 +179,11 @@ namespace TextToSpeech
 
             处理显示Text(CurrentDataList, 局部显示文本, Local_Number, Local_ID);
             Local_Left.IsEnabled = true;
-           Local_Right.IsEnabled = true;
+            Local_Right.IsEnabled = true;
         }
 
 
-        private void 处理显示Text(List<TextData> datas,TextBox Log,TextBox Number, TextBox id)
+        private void 处理显示Text(List<TextData> datas, TextBox Log, TextBox Number, TextBox id)
         {
             if (datas.Count > Convert.ToInt32(Number.Text))
             {
@@ -149,8 +191,8 @@ namespace TextToSpeech
             }
             else
             {
-                Number.Text = (datas.Count-1).ToString();
-                Log.Text = datas[datas.Count-1].Log;
+                Number.Text = (datas.Count - 1).ToString();
+                Log.Text = datas[datas.Count - 1].Log;
             }
             id.Text = datas[Convert.ToInt32(Number.Text)].ID;
 
@@ -221,21 +263,38 @@ namespace TextToSpeech
             }
             String voice = VoiceBoxList.SelectedItem?.ToString();
             String player = PlayerBoxList.SelectedItem?.ToString();
-            if(voice?.Length > 0)
+            if (voice?.Length > 0)
             {
                 测试播放语音.IsEnabled = true;
                 生成指定语音.IsEnabled = true;
             }
 
 
-            if (voice?.Length>0 && player?.Length>0&& VoicePath?.Length>0)
+            if (voice?.Length > 0 && player?.Length > 0 && VoicePath?.Length > 0)
             {
                 生成所有语音.IsEnabled = true;
             }
 
         }
 
-         
+
+        void TextDispose(string Data)
+        {
+            textDataList = TextTool.QQLogSplit(Data);
+            PlayerBoxList.Items.Clear();
+            //QQArray =  textDataList.Select(a => a.QQ).Distinct().ToArray();
+            QQArray = textDataList.DistinctBy(a => a.QQ).ToArray();
+            foreach (var QQData in QQArray)
+            {
+                ComboBoxItem box = new ComboBoxItem();
+                box.Content = $"{QQData.RoleName} ({ QQData.QQ})";
+                PlayerBoxList.Items.Add(box);
+            }
+            Left.IsEnabled = true;
+            Right.IsEnabled = true;
+            处理显示Text(textDataList, 显示文本, Number, ID);
+        }
+
 
         private void BrowseButtonClickCallback(object sender, RoutedEventArgs e)
         {
@@ -250,28 +309,18 @@ namespace TextToSpeech
             {
                 StreamReader streamReader = new StreamReader(data.OpenFile(), Encoding.UTF8);
                 string tempData = streamReader.ReadToEnd();
-                TextBox.Text = data.FileName;//取得名称并输入到界面上。
-                textDataList = TextTool.QQLogSplit(tempData);
+                LogPath = TextBox.Text = data.FileName;//取得名称并输入到界面上。
 
                 #endregion
 
-                PlayerBoxList.Items.Clear();
-                //QQArray =  textDataList.Select(a => a.QQ).Distinct().ToArray();
-                QQArray = textDataList.DistinctBy(a => a.QQ).ToArray();
-                foreach (var QQData in QQArray)
-                {
-                    ComboBoxItem box = new ComboBoxItem();
-                    box.Content = $"{QQData.RoleName} ({ QQData.QQ})";
-                    PlayerBoxList.Items.Add(box);
-                }
-                Left.IsEnabled = true;
-                Right.IsEnabled = true;
-                处理显示Text(textDataList,显示文本,Number,ID);
+                TextDispose(tempData);
             }
             data.Dispose();
 
-           // 是否满足生成条件();
+            // 是否满足生成条件();
         }
+
+
         private void BrowseButton2ClickCallback(object sender, RoutedEventArgs e)
         {
             #region 让玩家选择保存声音的路径
@@ -291,15 +340,15 @@ namespace TextToSpeech
         }
 
 
-       
+
 
         private void VoiceReciteTo(object sender, RoutedEventArgs e)
         {
             //narratorcobj.TestNarrate(VoiceName);
             //try
             //{
-                narratorcobj.SetRate(Convert.ToInt32(RateIuput.Text));
-                narratorcobj.SelectVoice(VoiceName);
+            narratorcobj.SetRate(Convert.ToInt32(RateIuput.Text));
+            narratorcobj.SelectVoice(VoiceName);
 
 
             if (局部显示文本.Text.Length > 1)
@@ -330,7 +379,7 @@ namespace TextToSpeech
             //narratorcobj.SelectVoice(VoiceName);
             // narratorcobj.synth.SelectVoice(VoiceName);
 
-             VoiceProduction();
+            VoiceProduction();
 
 
             //var G = voices[1];
@@ -343,7 +392,7 @@ namespace TextToSpeech
         }
         private void PlayerVoiceButtonClick(object sender, RoutedEventArgs e)
         {
-         
+
 
 
             var newID = Regex.Replace(CurrentDataList[int.Parse(Local_Number.Text)].ID, RegexTool.匹配路径非法字符, "");//路径不支持的格式要自动和谐掉
@@ -370,14 +419,14 @@ namespace TextToSpeech
             {
 
 
-              var newID =   Regex.Replace(item.ID, RegexTool.匹配路径非法字符, "");//路径不支持的格式要自动和谐掉
+                var newID = Regex.Replace(item.ID, RegexTool.匹配路径非法字符, "");//路径不支持的格式要自动和谐掉
 
                 var newLog = item.Log.Replace("@", "at");//@处理成at
                 //var 和谐 = item.ID.Replace(" ", "");
 
 
 
-                narratorcobj.SaveToWave(VoicePath, newID, newLog);           
+                narratorcobj.SaveToWave(VoicePath, newID, newLog);
             }
 
 
@@ -392,7 +441,7 @@ namespace TextToSpeech
             VoiceNameArry = new string[narratorcobj.synth.GetInstalledVoices().Count];
 
 
-            for(int a=0;a< narratorcobj.synth.GetInstalledVoices().Count; a++)
+            for (int a = 0; a < narratorcobj.synth.GetInstalledVoices().Count; a++)
             {
                 VoiceNameArry[a] = narratorcobj.synth.GetInstalledVoices()[a].VoiceInfo.Name;
             }
@@ -409,13 +458,13 @@ namespace TextToSpeech
                 box.Content = voice.VoiceInfo.Name;
 
 
-               // desktop
+                // desktop
 
                 VoiceBoxList.Items.Add(box);
             }
         }
         #endregion;
-        
+
 
 
 
@@ -423,7 +472,7 @@ namespace TextToSpeech
         {
             //匹配路径非法字符
 
-             var newID = Regex.Replace(textDataList[Convert.ToInt32(Number.Text)].ID, RegexTool.匹配路径非法字符, "");//路径不支持的格式要自动和谐掉
+            var newID = Regex.Replace(textDataList[Convert.ToInt32(Local_Number.Text)].ID, RegexTool.匹配路径非法字符, "");//路径不支持的格式要自动和谐掉
             nAudio.SetFilePath(VoicePath, newID);
 
             nAudio.StartRec();
