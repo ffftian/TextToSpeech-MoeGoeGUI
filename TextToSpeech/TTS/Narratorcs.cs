@@ -15,8 +15,8 @@ public class Narrator
     /// 提供对语音合成引擎访问
     /// </summary>
     public SpeechSynthesizer synth;
-
-
+    //醒醒，微软TTS这玩意没法改语调
+    public PromptBuilder promptBuilder;
 
 
 
@@ -56,6 +56,12 @@ public class Narrator
 
         return g.ToList();
     }
+    public void SetRate(int Rate)
+    {
+        synth.Rate = Rate;
+    }
+
+    
 
 
     /// <summary>

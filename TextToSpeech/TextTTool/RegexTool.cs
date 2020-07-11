@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TextToSpeech.TextTTool
-{
-    static class RegexTool
+
+public static class RegexTool
     {
-        static string 匹配路径非法字符 = "[: *?]";
+        public static string 匹配路径非法字符 = "[: *?]";
+
+    public static string 配音无法区别的字符 = "@";
 
     }
-}
+
