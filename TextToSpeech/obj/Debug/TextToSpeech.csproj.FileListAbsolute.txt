@@ -13,10 +13,8 @@ C:\Users\ftianf\source\repos\TextToSpeech\TextToSpeech\obj\Debug\TextToSpeech.cs
 C:\Users\ftianf\source\repos\TextToSpeech\TextToSpeech\obj\Debug\TextToSpeech.exe
 C:\Users\ftianf\source\repos\TextToSpeech\TextToSpeech\obj\Debug\TextToSpeech.pdb
 C:\Users\ftianf\source\repos\TextToSpeech\TextToSpeech\obj\Debug\LoadModuleControl.g.cs
-C:\Users\ftianf\source\repos\TextToSpeech\TextToSpeech\obj\Debug\Page1.g.cs
 C:\Users\ftianf\source\repos\TextToSpeech\TextToSpeech\obj\Debug\GeneratedInternalTypeHelper.g.cs
 C:\Users\ftianf\source\repos\TextToSpeech\TextToSpeech\obj\Debug\LoadModuleControl.baml
-C:\Users\ftianf\source\repos\TextToSpeech\TextToSpeech\obj\Debug\Page1.baml
 E:\git项目\TTS\TextToSpeech\TextToSpeech\obj\Debug\LoadModuleControl.g.cs
 E:\git项目\TTS\TextToSpeech\TextToSpeech\obj\Debug\MainWindow.g.cs
 E:\git项目\TTS\TextToSpeech\TextToSpeech\obj\Debug\Page1.g.cs
