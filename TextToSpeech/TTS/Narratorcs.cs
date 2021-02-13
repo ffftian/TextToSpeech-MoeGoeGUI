@@ -17,11 +17,6 @@ public class Narrator
     public SpeechSynthesizer synth;
     //醒醒，微软TTS这玩意没法改语调
     public PromptBuilder promptBuilder;
-
-
-
-
-
     /// <summary>
     /// 音量设置
     /// </summary>

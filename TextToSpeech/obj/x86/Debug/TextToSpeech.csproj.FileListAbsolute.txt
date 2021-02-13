@@ -1,0 +1,7 @@
+E:\git项目\TextToSpeech\TextToSpeech\obj\x86\Debug\LoadModuleControl.g.cs
+E:\git项目\TextToSpeech\TextToSpeech\obj\x86\Debug\MainWindow.g.cs
+E:\git项目\TextToSpeech\TextToSpeech\obj\x86\Debug\RecordControl.g.cs
+E:\git项目\TextToSpeech\TextToSpeech\obj\x86\Debug\App.g.cs
+E:\git项目\TextToSpeech\TextToSpeech\obj\x86\Debug\GeneratedInternalTypeHelper.g.cs
+E:\git项目\TextToSpeech\TextToSpeech\obj\x86\Debug\TextToSpeech_MarkupCompile.cache
+E:\git项目\TextToSpeech\TextToSpeech\obj\x86\Debug\TextToSpeech_MarkupCompile.lref
