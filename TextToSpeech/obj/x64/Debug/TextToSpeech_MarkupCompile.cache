@@ -1,7 +1,7 @@
 ﻿TextToSpeech
 
 
-winexe
+exe
 C#
 .cs
 E:\git项目\TextToSpeech\TextToSpeech\obj\x64\Debug\
@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 E:\git项目\TextToSpeech\TextToSpeech\App.xaml
-3-2010774297
+3-1803048493
 
-132140532159
-17813686891
-LoadModuleControl.xaml;MainWindow.xaml;RecordControl.xaml;
+172097381632
+181687215194
+LineWaveFormControl.xaml;LoadModuleControl.xaml;MainWindow.xaml;
 
 False
 

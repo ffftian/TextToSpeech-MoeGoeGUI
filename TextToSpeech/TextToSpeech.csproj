@@ -89,6 +89,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'TextToSpeech2|x86'">
     <OutputPath>bin\x86\TextToSpeech2\</OutputPath>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="NAudio, Version=1.9.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NAudio.1.9.0\lib\net35\NAudio.dll</HintPath>
@@ -98,6 +101,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Speech" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -118,16 +122,26 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="LineWaveFormControl.xaml.cs">
+      <DependentUpon>LineWaveFormControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="LoadModuleControl.xaml.cs">
       <DependentUpon>LoadModuleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MiaoAudio.Extras\SampleAggregator.cs" />
+    <Compile Include="MainWindowModel.cs" />
+    <Compile Include="MiaoAudio.Extras\LineWaveFormVisualization.cs" />
     <Compile Include="MiaoNAudio\NAudioRecordHelper.cs" />
     <Compile Include="TextTTool\LinqTool.cs" />
     <Compile Include="TextTTool\RegexTool.cs" />
     <Compile Include="TextTTool\TextData.cs" />
     <Compile Include="TextTTool\TextTool.cs" />
     <Compile Include="TTS\Narratorcs.cs" />
+    <Compile Include="WaveInterface\IVisualizationPlugin.cs" />
+    <Compile Include="WaveInterface\IWaveFormRenderer.cs" />
+    <Page Include="LineWaveFormControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="LoadModuleControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

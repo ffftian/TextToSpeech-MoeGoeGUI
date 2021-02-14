@@ -11,10 +11,6 @@
             <TabItem Header="载入">
                 <local:LoadModuleControl/>
             </TabItem>
-
-            <TabItem Header="其他功能">
-                <local:RecordControl/>
-            </TabItem>
         </TabControl>
     </Grid>
 </Window>

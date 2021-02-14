@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NAudioWpfDemo;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -33,14 +34,53 @@ namespace TextToSpeech
         private string QQPlayerID ;//玩家名字
         private string VoicePath { get { return VoicePathBox.Text; } set { VoicePathBox.Text = value; } }//语音地址
         private string VoiceName;//语音名字
-
-
         public string[] VoiceNameArry;//这条数组用于读取名称，因为我不懂TM如何把object转成正常的string，用 VoiceName = box.SelectedValue.tostring();转出来会多些东西，像是反射出的。
 
 
         public NAudioRecorder nAudio;//语音录制
         const string 配置文件 = "\\配置文件.txt";
         const string AllRole = "所有角色";
+
+
+
+        LoadModuleModel _vm = new LoadModuleModel();
+
+        public LoadModuleControl()
+        {
+            _vm = new LoadModuleModel();
+            nAudio = new NAudioRecorder();
+            nAudio.OnWaveRecording += _vm.DrawVisualWaveform;
+            this.DataContext = _vm;
+            InitializeComponent();
+            InitData();
+
+            BrowseButton.Click += BrowseButtonClickCallback;
+            BrowseButton2.Click += BrowseButton2ClickCallback;
+
+            测试播放语音.Click += VoiceReciteTo;
+            生成所有语音.Click += PlayerVoiceALLButtonClick;
+            生成指定语音.Click += PlayerVoiceButtonClick;
+
+            //BrowseButton.Click += BoxClick;
+            //BrowseButton2.Click += BoxClick;
+            VoiceBoxList.SelectionChanged += BoxClick;
+            PlayerBoxList.SelectionChanged += BoxClick;
+
+            PlayerBoxList.SelectionChanged += LocalListSelcet;
+
+            开始录音.Click += RecordVoiceClick;
+            停止录音.Click += EndVoiceClick;
+
+            InitVoiceEngine();
+
+            Left.Click += LeftClick;
+            Right.Click += RightClick;
+
+            Local_Left.Click += LocalLeftClick;
+            Local_Right.Click += LocalRightClick;
+            SaveButton.Click += SaveClick;
+        }
+
 
         public void InitData()
         {
@@ -72,49 +112,7 @@ namespace TextToSpeech
         {
             SaveData();
         }
-
-
-
-
-
-        public LoadModuleControl()
-        {
-            nAudio = new NAudioRecorder();
-            InitializeComponent();
-            InitData();
-
-            BrowseButton.Click += BrowseButtonClickCallback;
-            BrowseButton2.Click += BrowseButton2ClickCallback;
-
-            测试播放语音.Click += VoiceReciteTo;
-            生成所有语音.Click += PlayerVoiceALLButtonClick;
-            生成指定语音.Click += PlayerVoiceButtonClick;
-
-
-            //BrowseButton.Click += BoxClick;
-            //BrowseButton2.Click += BoxClick;
-            VoiceBoxList.SelectionChanged += BoxClick;
-            PlayerBoxList.SelectionChanged += BoxClick;
-
-            PlayerBoxList.SelectionChanged += LocalListSelcet;
-
-            开始录音.Click += RecordVoiceClick;
-            停止录音.Click += EndVoiceClick;
-
-            InitVoiceEngine();
-
-            Left.Click += LeftClick;
-            Right.Click += RightClick;
-
-            Local_Left.Click += LocalLeftClick;
-            Local_Right.Click += LocalRightClick;
-            // Number. += ;
-            SaveButton.Click += SaveClick;
-
-
-
-        }
-
+      
 
         private void LocalLeftClick(object sender, RoutedEventArgs e)
         {
@@ -448,9 +446,15 @@ namespace TextToSpeech
         /// <param name="e"></param>
         private void RecordVoiceClick(object sender, RoutedEventArgs e)
         {
-
-
-            var newID = Regex.Replace(CurrentDataList[Convert.ToInt32(Local_Number.Text)].ID, RegexTool.匹配路径非法字符, "");//路径不支持的格式要自动和谐掉
+            string newID;
+            if (CurrentDataList == null || CurrentDataList.Count == 0)
+            {
+                newID = "temp";
+            }
+            else
+            {
+                newID = Regex.Replace(CurrentDataList[Convert.ToInt32(Local_Number.Text)].ID, RegexTool.匹配路径非法字符, "");//路径不支持的格式要自动和谐掉
+            }
             nAudio.SetFilePath(VoicePath, newID);
             nAudio.StartRec();
             开始录音.IsEnabled = false;

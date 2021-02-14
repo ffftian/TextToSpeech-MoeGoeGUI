@@ -33,7 +33,7 @@
         <Button Name="生成指定语音" Content="生成指定语音" HorizontalAlignment="Left" Margin="617,313,0,0" VerticalAlignment="Top" Width="117" Height="29" IsEnabled="False" />
 
         <GroupBox Header="人工语音" HorizontalAlignment="Left" Height="188" Margin="0,445,0,0" VerticalAlignment="Top" Width="782"/>
-        
+        <ContentPresenter Content="{Binding Visualization}" Margin="280,479,18,122" />
 
         <Button Name="开始录音" Content="开始录音" HorizontalAlignment="Left" Margin="569,578,0,0" VerticalAlignment="Top" Width="92" Height="35" />
         <Button Name="停止录音" Content="停止录音" HorizontalAlignment="Left" Margin="661,578,0,0" VerticalAlignment="Top" Width="92" Height="35" IsEnabled="False"/>
