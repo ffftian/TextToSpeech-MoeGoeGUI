@@ -5,9 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TextToSpeech"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="800">
+        Title="跑团录音工具" Height="750" Width="800">
     <Grid>
-        <TabControl HorizontalAlignment="Left" Height="700" Margin="10,10,0,0" VerticalAlignment="Top" Width="772">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="55*"/>
+            <ColumnDefinition Width="738*"/>
+        </Grid.ColumnDefinitions>
+        <TabControl HorizontalAlignment="Left" Height="700" Margin="10,10,0,-41" VerticalAlignment="Top" Width="772" Grid.ColumnSpan="2">
             <TabItem Header="载入">
                 <local:LoadModuleControl/>
             </TabItem>

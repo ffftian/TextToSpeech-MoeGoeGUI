@@ -51,7 +51,7 @@
         <TextBox Name="局部显示文本" HorizontalAlignment="Left" Height="91" Margin="10,522,0,0" TextWrapping="Wrap" Text="文字" VerticalAlignment="Top" Width="252" />
         <Button Name ="Local_Left"  Content="左" HorizontalAlignment="Left" Margin="10,497,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False"/>
         <Button Name ="Local_Right"  Content="右" HorizontalAlignment="Left" Margin="187,497,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False"/>
-        <TextBox Name ="Local_Number"  Text="0" HorizontalAlignment="Left" Margin="85,497,0,0" VerticalAlignment="Top" Width="102"  HorizontalContentAlignment="Center" RenderTransformOrigin="0.713,0.882"/>
+        <TextBox Name ="Local_Number"  Text="0" HorizontalAlignment="Left" Margin="85,497,0,0" VerticalAlignment="Top" Width="102"  HorizontalContentAlignment="Center" RenderTransformOrigin="0.713,0.882" IsEnabled="False"/>
         <TextBox Name="Local_ID" Text ="ID"  HorizontalAlignment="Left" FontSize="14" Margin="11,479,0,0"  TextWrapping="NoWrap" VerticalAlignment="Top" Width="251" HorizontalContentAlignment="Center"/>
         <Button Name="SaveButton" Content="保存设置" FontSize="14" Margin="623,392,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="111"/>
         <Label Content="文字总览" HorizontalAlignment="Center" Margin="485,52,214,0" VerticalAlignment="Top" Width="101" HorizontalContentAlignment="Center"/>
