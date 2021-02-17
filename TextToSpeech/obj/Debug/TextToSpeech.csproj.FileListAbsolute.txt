@@ -46,14 +46,12 @@ E:\git项目\TextToSpeech\TextToSpeech\bin\Debug\TextToSpeech.pdb
 E:\git项目\TextToSpeech\TextToSpeech\obj\Debug\TextToSpeech.csprojAssemblyReference.cache
 E:\git项目\TextToSpeech\TextToSpeech\obj\Debug\LoadModuleControl.g.cs
 E:\git项目\TextToSpeech\TextToSpeech\obj\Debug\MainWindow.g.cs
-E:\git项目\TextToSpeech\TextToSpeech\obj\Debug\RecordControl.g.cs
 E:\git项目\TextToSpeech\TextToSpeech\obj\Debug\App.g.cs
 E:\git项目\TextToSpeech\TextToSpeech\obj\Debug\GeneratedInternalTypeHelper.g.cs
 E:\git项目\TextToSpeech\TextToSpeech\obj\Debug\TextToSpeech_MarkupCompile.cache
 E:\git项目\TextToSpeech\TextToSpeech\obj\Debug\TextToSpeech_MarkupCompile.lref
 E:\git项目\TextToSpeech\TextToSpeech\obj\Debug\LoadModuleControl.baml
 E:\git项目\TextToSpeech\TextToSpeech\obj\Debug\MainWindow.baml
-E:\git项目\TextToSpeech\TextToSpeech\obj\Debug\RecordControl.baml
 E:\git项目\TextToSpeech\TextToSpeech\obj\Debug\TextToSpeech.g.resources
 E:\git项目\TextToSpeech\TextToSpeech\obj\Debug\TextToSpeech.Properties.Resources.resources
 E:\git项目\TextToSpeech\TextToSpeech\obj\Debug\TextToSpeech.csproj.GenerateResource.cache
@@ -61,3 +59,8 @@ E:\git项目\TextToSpeech\TextToSpeech\obj\Debug\TextToSpeech.csproj.CoreCompile
 E:\git项目\TextToSpeech\TextToSpeech\obj\Debug\TextToSpeech.csproj.CopyComplete
 E:\git项目\TextToSpeech\TextToSpeech\obj\Debug\TextToSpeech.exe
 E:\git项目\TextToSpeech\TextToSpeech\obj\Debug\TextToSpeech.pdb
+E:\git项目\TextToSpeech\TextToSpeech\bin\Debug\NAudio.dll
+E:\git项目\TextToSpeech\TextToSpeech\bin\Debug\NSpeex.dll
+E:\git项目\TextToSpeech\TextToSpeech\bin\Debug\NAudio.xml
+E:\git项目\TextToSpeech\TextToSpeech\obj\Debug\LineWaveFormControl.g.cs
+E:\git项目\TextToSpeech\TextToSpeech\obj\Debug\LineWaveFormControl.baml

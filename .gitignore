@@ -2,3 +2,4 @@
 *.sdf 
 *.log
 *.temp
+/TextToSpeech/bin

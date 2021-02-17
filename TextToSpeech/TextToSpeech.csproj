@@ -138,7 +138,7 @@
     <Compile Include="MiaoAudio.Extras\LineWaveFormVisualization.cs" />
     <Compile Include="MiaoNAudio\NAudioRecordHelper.cs" />
     <Compile Include="TextTTool\LinqTool.cs" />
-    <Compile Include="TextTTool\RegexTool.cs" />
+    <Compile Include="TextTTool\MiaoRegexTool.cs" />
     <Compile Include="TextTTool\TextData.cs" />
     <Compile Include="TextTTool\TextTool.cs" />
     <Compile Include="TTS\Narratorcs.cs" />
