@@ -3,3 +3,4 @@
 *.log
 *.temp
 /TextToSpeech/bin
+/TextToSpeech/obj
