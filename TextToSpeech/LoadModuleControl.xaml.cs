@@ -423,7 +423,7 @@ namespace TextToSpeech
 
 
 
-            var newID = Regex.Replace(CurrentRoleDataList[int.Parse(Local_Number.Text)].ID, RegexTool.匹配路径非法字符, "");//路径不支持的格式要自动和谐掉
+            var newID = Regex.Replace(CurrentRoleDataList[int.Parse(Local_Number.Text)].ID, MiaoRegexTool.路径非法字符, "");//路径不支持的格式要自动和谐掉
             var newLog = CurrentRoleDataList[int.Parse(Local_Number.Text)].Log.Replace("@", "at");//@处理成at
             narratorcobj.SaveToWave(VoicePath, newID, newLog);
 
@@ -450,7 +450,7 @@ namespace TextToSpeech
             narratorcobj.SelectVoice(VoiceName);
             foreach (var item in SelectedLE)
             {
-                var newID = Regex.Replace(item.ID, RegexTool.匹配路径非法字符, "");//路径不支持的格式名称要自动和谐掉
+                var newID = Regex.Replace(item.ID, MiaoRegexTool.路径非法字符, "");//路径不支持的格式名称要自动和谐掉
                 var newLog = item.Log.Replace("@", "at");//@处理成at
                 narratorcobj.SaveToWave(VoicePath, newID, newLog);
             }
@@ -495,7 +495,7 @@ namespace TextToSpeech
             }
             else
             {
-                newID = Regex.Replace(CurrentRoleDataList[Convert.ToInt32(Local_Number.Text)].ID, RegexTool.匹配路径非法字符, "");//路径不支持的格式要自动和谐掉
+                newID = Regex.Replace(CurrentRoleDataList[Convert.ToInt32(Local_Number.Text)].ID, MiaoRegexTool.路径非法字符, "");//路径不支持的格式要自动和谐掉
             }
             nAudio.SetFilePath(VoicePath, newID);
             nAudio.StartRec();
