@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 public static class QQTool
 {
-    public static List<TText> QQLogSplit<TText>(string text) where TText : TextData, new()
+    public static List<TText> QQLogSplit<TText>(string text, Action<Exception,string> error) where TText : TextData, new()
     {
 
 
@@ -20,7 +20,7 @@ public static class QQTool
         {
 
             TText txt = new TText();
-            txt.Analysis(SingleConversation[i], i);
+            txt.Analysis(SingleConversation[i], i, error);
             dataList.Add(txt);
 
         }

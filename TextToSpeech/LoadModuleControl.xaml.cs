@@ -326,7 +326,7 @@ namespace TextToSpeech
         /// <param name="Data"></param>
         void TextAnalysis(string Data)
         {
-            textDataList = QQTool.QQLogSplit<TextData>(Data);
+            textDataList = QQTool.QQLogSplit<TextData>(Data, ErorrShow);
             PlayerBoxList.Items.Clear();
             FirstQQNameArray = textDataList.DistinctBy(a => a.QQ).ToArray();
             foreach (var QQData in FirstQQNameArray)
@@ -342,7 +342,17 @@ namespace TextToSpeech
             Right.IsEnabled = true;
             处理显示Text(textDataList, 显示文本, Number, ID);
         }
-
+        bool cancel = false;
+        void ErorrShow(Exception exception,string content)
+        {
+            if (cancel) return;
+            switch(MessageBox.Show(content, exception.Message,MessageBoxButton.OKCancel))
+            {
+                case MessageBoxResult.Cancel:
+                    cancel = true;
+                    break;
+            }
+        }
 
         private void BrowseButtonClickCallback(object sender, RoutedEventArgs e)
         {

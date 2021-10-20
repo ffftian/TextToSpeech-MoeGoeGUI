@@ -21,7 +21,7 @@ public class TextData
     /// </summary>
     /// <param name="message"></param>
     ///  <param name="Serial"=debug用，用于标识序号></param>
-    public void Analysis(string SingleText, int Serial)
+    public void Analysis(string SingleText, int Serial,Action<Exception,string> error)
     {
         try
         {
@@ -49,9 +49,10 @@ public class TextData
                 }
             }
         }
-        catch
+        catch(Exception e)
         {
-            throw new Exception($"错误的读取，序号{Serial}，输出原句:{SingleText}");
+            error.Invoke(e, SingleText);
+            //throw new Exception($"错误的读取，序号{Serial}，输出原句:{SingleText}");
         }
     }
 }
