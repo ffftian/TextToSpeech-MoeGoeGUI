@@ -203,8 +203,8 @@ namespace TextToSpeech
             else
             {
                 CurrentRoleDataList = (from r in textDataList where r.QQ == PlayerQQ select r).ToList();
-                处理显示Text(CurrentRoleDataList, 局部显示文本, Local_Number, Local_ID);
             }
+            处理显示Text(CurrentRoleDataList, 局部显示文本, Local_Number, Local_ID);
             Local_Left.IsEnabled = true;
             Local_Right.IsEnabled = true;
             Local_Number.IsEnabled = true;
@@ -213,6 +213,11 @@ namespace TextToSpeech
 
         private void 处理显示Text(List<TextData> datas, TextBox Log, TextBox Number, TextBox id)
         {
+            //if(datas.Count==0)
+            //{
+            //    return;
+            //}
+
             if (datas.Count > Convert.ToInt32(Number.Text))
             {
                 Log.Text = datas[Convert.ToInt32(Number.Text)].Log;
@@ -278,17 +283,25 @@ namespace TextToSpeech
                 }
                 else if (box.Name == PlayerBoxList.Name)
                 {
-                    PlayerBoxList.SelectedItem = PlayerBoxList.SelectedValue;
-                    if (PlayerBoxList.SelectedValue.ToString() == AllRole)
-                    {
-                        PlayerQQ = AllRole;
-                        PlayerName = "0";
-                    }
-                    else
+                    //PlayerBoxList.SelectedItem = PlayerBoxList.SelectedValue;
+                    //if (PlayerBoxList.SelectedValue as string == AllRole)
+                    //{
+                    //    PlayerQQ = AllRole;
+                    //    PlayerName = "0";
+                    //}
+                    //else
+                    //{
+                       if(PlayerBoxList.SelectedIndex< FirstQQNameArray.Length)
                     {
                         PlayerQQ = FirstQQNameArray[PlayerBoxList.SelectedIndex].QQ;
                         PlayerName = FirstQQNameArray[PlayerBoxList.SelectedIndex].RoleName;
                     }
+                       else
+                    {
+                        PlayerQQ = AllRole;
+                        PlayerName = AllRole;
+                    }
+                    //} 
                 }
             }
             String voice = VoiceBoxList.SelectedItem?.ToString();
@@ -336,7 +349,7 @@ namespace TextToSpeech
                 PlayerBoxList.Items.Add(box);
             }
             ComboBoxItem box2 = new ComboBoxItem();
-            box2.Content = $"{AllRole}(0)";
+            box2.Content = $"{AllRole}";
             PlayerBoxList.Items.Add(box2);
             Left.IsEnabled = true;
             Right.IsEnabled = true;
