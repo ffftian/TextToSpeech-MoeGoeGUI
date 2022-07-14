@@ -66,7 +66,6 @@ namespace TextToSpeech
             //BrowseButton2.Click += BoxClick;
             VoiceBoxList.SelectionChanged += BoxClick;
             PlayerBoxList.SelectionChanged += BoxClick;
-
             PlayerBoxList.SelectionChanged += LocalListSelcet;
 
             开始录音.Click += RecordVoiceClick;
@@ -82,6 +81,8 @@ namespace TextToSpeech
             SaveButton.Click += SaveClick;
             Local_Number.TextChanged += Local_Number_TextChanged;
         }
+
+
         public void InitConfig()
         {
             LogPath = "null";
@@ -202,7 +203,7 @@ namespace TextToSpeech
             }
             else
             {
-                CurrentRoleDataList = (from r in textDataList where r.QQ == PlayerQQ select r).ToList();
+                CurrentRoleDataList = (from text in textDataList where text.QQ == PlayerQQ select text).ToList();
             }
             处理显示Text(CurrentRoleDataList, 局部显示文本, Local_Number, Local_ID);
             Local_Left.IsEnabled = true;
@@ -272,16 +273,14 @@ namespace TextToSpeech
             if (sender is ComboBox)
             {
                 ComboBox box = sender as ComboBox;
-                if(box.Items.Count==0)
-                {
-                    return;
-                }
+                if (box.Items.Count == 0) return;
+
                 if (box.Name == VoiceBoxList.Name)
                 {
                     VoiceBoxList.SelectedItem = box.SelectedValue;//这Value是TM的方法。
                     VoiceName = VoiceNameArry[box.SelectedIndex];
                 }
-                else if (box.Name == PlayerBoxList.Name)
+                else if (box.Name == PlayerBoxList.Name)//书覅有是玩家选择栏
                 {
                     //PlayerBoxList.SelectedItem = PlayerBoxList.SelectedValue;
                     //if (PlayerBoxList.SelectedValue as string == AllRole)
@@ -291,7 +290,8 @@ namespace TextToSpeech
                     //}
                     //else
                     //{
-                       if(PlayerBoxList.SelectedIndex< FirstQQNameArray.Length)
+                   
+                      if(PlayerBoxList.SelectedIndex< FirstQQNameArray.Length)
                     {
                         PlayerQQ = FirstQQNameArray[PlayerBoxList.SelectedIndex].QQ;
                         PlayerName = FirstQQNameArray[PlayerBoxList.SelectedIndex].RoleName;
@@ -339,8 +339,8 @@ namespace TextToSpeech
         /// <param name="Data"></param>
         void TextAnalysis(string Data)
         {
+            PlayerBoxList.Items.Clear();//清空时会触发回调导致问题，所以需要先进行Items的清理，再去读取新的QQ资源。
             textDataList = QQTool.QQLogSplit<TextData>(Data, ErorrShow);
-            PlayerBoxList.Items.Clear();
             FirstQQNameArray = textDataList.DistinctBy(a => a.QQ).ToArray();
             foreach (var QQData in FirstQQNameArray)
             {
@@ -366,7 +366,11 @@ namespace TextToSpeech
                     break;
             }
         }
-
+        /// <summary>
+        /// 选中外部文档文件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BrowseButtonClickCallback(object sender, RoutedEventArgs e)
         {
 
