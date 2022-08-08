@@ -86,9 +86,7 @@ public class NAudioRecordSoundcard
     {
         wasapiLoopbackCapture = new WasapiLoopbackCapture();
         cacheFloat = new WaveInEventFloat(2);
-        wasapiLoopbackCapture.WaveFormat = new WaveFormat(24000,16,2);
-
-        //wasapiLoopbackCapture.WaveFormat;
+        //wasapiLoopbackCapture.WaveFormat = new WaveFormat(24000,16,2);
         waveFile = new WaveFileWriter(filePath, wasapiLoopbackCapture.WaveFormat);
         wasapiLoopbackCapture.StartRecording();
         wasapiLoopbackCapture.DataAvailable += new EventHandler<WaveInEventArgs>(WasapiLoopbackCapture_DataAvailable);
@@ -101,7 +99,7 @@ public class NAudioRecordSoundcard
         {
             waveFile.Write(e.Buffer, 0, e.BytesRecorded);
             waveFile.Flush();
-            cacheFloat.ReAnalysis(e.Buffer, e.BytesRecorded/32);
+            cacheFloat.ReAnalysis(e.Buffer, e.BytesRecorded / 32);
 
             Application.Current.Dispatcher.Invoke(new Action(() => OnWaveRecording.Invoke(this, cacheFloat)));
 
