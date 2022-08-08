@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Threading;
 using NAudio.Wave;
+using NAudio.Wave.Compression;
 
 
 //win32和win64程序语音姬不互通，需要切程序版本才可以调32位下的语音和64位的语音的语音姬。
@@ -51,18 +52,7 @@ public class WaveInEventFloat : EventArgs
         //}
     }
 
-    //public void ReAnalysis(WaveInEventArgs e)
-    //{
-    //    this.samplesLength = e.BytesRecorded / 2;
-    //    var buffer = new WaveBuffer(e.Buffer);
-
-    //    samples = new float[buffer.FloatBuffer.Length];
-    //    for (int i = 0; i < buffer.FloatBuffer.Length; i++)
-    //    {
-    //        samples[i] = buffer.FloatBuffer[i] / 32768f;
-    //    }
-    //}
-
+  
 }
 /// <summary>
 /// 录制声卡输出
@@ -86,8 +76,9 @@ public class NAudioRecordSoundcard
     {
         wasapiLoopbackCapture = new WasapiLoopbackCapture();
         cacheFloat = new WaveInEventFloat(2);
-        //wasapiLoopbackCapture.WaveFormat = new WaveFormat(24000,16,2);
+        wasapiLoopbackCapture.WaveFormat = new WaveFormat(24000,16,1);
         waveFile = new WaveFileWriter(filePath, wasapiLoopbackCapture.WaveFormat);
+        
         wasapiLoopbackCapture.StartRecording();
         wasapiLoopbackCapture.DataAvailable += new EventHandler<WaveInEventArgs>(WasapiLoopbackCapture_DataAvailable);
         wasapiLoopbackCapture.RecordingStopped += new EventHandler<StoppedEventArgs>(WasapiLoopbackCapture_RecordingStopped);
@@ -98,8 +89,8 @@ public class NAudioRecordSoundcard
         if (waveFile != null)
         {
             waveFile.Write(e.Buffer, 0, e.BytesRecorded);
-            waveFile.Flush();
-            cacheFloat.ReAnalysis(e.Buffer, e.BytesRecorded / 32);
+            //waveFile.Flush();
+            cacheFloat.ReAnalysis(e.Buffer, e.BytesRecorded);
 
             Application.Current.Dispatcher.Invoke(new Action(() => OnWaveRecording.Invoke(this, cacheFloat)));
 

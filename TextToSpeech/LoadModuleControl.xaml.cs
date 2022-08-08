@@ -92,6 +92,7 @@ namespace TextToSpeech
         public void InitConfig()
         {
             LogPath = "null";
+            VoicePath = null;
             VoicePath = "null";
             VoiceName = "null";
 
@@ -515,6 +516,22 @@ namespace TextToSpeech
             }
         }
         #endregion;
+
+        private bool RecordStatusCheck()
+        {
+            if(Directory.Exists(VoicePath)&& File.Exists(LogPath))
+            {
+                return true;
+            }
+            else
+            {
+                MessageBox.Show("路径不正常，请检查Log路径和导出路径", "错误", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+
+        }
+
         /// <summary>
         /// 录制麦克风声音。
         /// </summary>
@@ -522,6 +539,8 @@ namespace TextToSpeech
         /// <param name="e"></param>
         private void RecordMicrophoneVoiceClick(object sender, RoutedEventArgs e)
         {
+            if (!RecordStatusCheck()) return;
+
             string newID;
             if (CurrentRoleDataList == null || CurrentRoleDataList.Count == 0)
             {
@@ -546,6 +565,8 @@ namespace TextToSpeech
         /// <param name="e"></param>
         private void RecordComputerVoiceClick(object sender, RoutedEventArgs e)
         {
+            if (!RecordStatusCheck()) return;
+
             string newID;
             if (CurrentRoleDataList == null || CurrentRoleDataList.Count == 0)
             {
