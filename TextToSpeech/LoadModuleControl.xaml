@@ -32,11 +32,12 @@
         <Button Name="测试播放语音" Content="测试播放语音" HorizontalAlignment="Left" Margin="500,270,0,0" VerticalAlignment="Top" Width="117" Height="29" IsEnabled="False" />
         <Button Name="生成指定语音" Content="生成指定语音" HorizontalAlignment="Left" Margin="617,313,0,0" VerticalAlignment="Top" Width="117" Height="29" IsEnabled="False" />
 
-        <GroupBox Header="人工语音" HorizontalAlignment="Left" Height="188" Margin="0,445,0,0" VerticalAlignment="Top" Width="782"/>
+        <GroupBox Header="人工语音" HorizontalAlignment="Left" Height="214" Margin="0,445,0,0" VerticalAlignment="Top" Width="782"/>
         <ContentPresenter Content="{Binding Visualization}" Margin="280,479,18,122" />
 
-        <Button Name="开始录音" Content="开始录音" HorizontalAlignment="Left" Margin="569,578,0,0" VerticalAlignment="Top" Width="92" Height="35" />
-        <Button Name="停止录音" Content="停止录音" HorizontalAlignment="Left" Margin="661,578,0,0" VerticalAlignment="Top" Width="92" Height="35" IsEnabled="False"/>
+        <Button Name="开始录音1" Content="开始录音（麦克风）" HorizontalAlignment="Left" Margin="536,608,0,0" VerticalAlignment="Top" Width="126" Height="36" />
+        <Button Name="开始录音2" Content="开始录音（电脑）" HorizontalAlignment="Left" Margin="536,578,0,0" VerticalAlignment="Top" Width="126" Height="35" />
+        <Button Name="停止录音" Content="停止录音" HorizontalAlignment="Left" Margin="667,608,0,0" VerticalAlignment="Top" Width="92" Height="36" IsEnabled="False"/>
         <Label Content="语调更改" FontSize="14" HorizontalAlignment="Left" Margin="419,314,0,0" VerticalAlignment="Top"/>
         <TextBox Name ="RateIuput" Text="0" FontSize="20" HorizontalAlignment="Left" Margin="500,313,0,0" VerticalAlignment="Top" Width="101"  HorizontalContentAlignment="Center" Height="29" />
 

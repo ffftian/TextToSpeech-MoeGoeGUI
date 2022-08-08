@@ -21,7 +21,7 @@ namespace TextToSpeech
 
         public void DrawVisualWaveform(object sender, WaveInEventFloat e)
         {
-            selectedVisualization.OnSamples(e.samples, e.samplesLegth);
+            selectedVisualization.OnSamples(e.samples, e.samplesLength);
         }
 
         //public void Test()

@@ -38,7 +38,9 @@ namespace TextToSpeech
         public string[] VoiceNameArry;//这条数组用于读取名称，因为我不懂TM如何把object转成正常的string，用 VoiceName = box.SelectedValue.tostring();转出来会多些东西，像是反射出的。
 
 
-        public NAudioRecorder nAudio;//语音录制
+        public NAudioRecorder nAudioMicrophone;//语音录制
+        public NAudioRecordSoundcard nAudioSoundcard;//电脑音频录制
+
         const string 配置文件 = "\\配置文件.txt";
         const string AllRole = "所有角色";
 
@@ -48,8 +50,11 @@ namespace TextToSpeech
         public LoadModuleControl()
         {
             _vm = new LoadModuleModel();
-            nAudio = new NAudioRecorder();
-            nAudio.OnWaveRecording += _vm.DrawVisualWaveform;
+            nAudioMicrophone = new NAudioRecorder();
+            nAudioSoundcard = new NAudioRecordSoundcard();
+            nAudioMicrophone.OnWaveRecording += _vm.DrawVisualWaveform;
+            nAudioSoundcard.OnWaveRecording += _vm.DrawVisualWaveform;
+
             this.DataContext = _vm;
             InitializeComponent();
             InitVoiceEngine();
@@ -68,7 +73,8 @@ namespace TextToSpeech
             PlayerBoxList.SelectionChanged += BoxClick;
             PlayerBoxList.SelectionChanged += LocalListSelcet;
 
-            开始录音.Click += RecordVoiceClick;
+            开始录音1.Click += RecordMicrophoneVoiceClick;
+            开始录音2.Click += RecordComputerVoiceClick;
             停止录音.Click += EndVoiceClick;
 
 
@@ -406,7 +412,8 @@ namespace TextToSpeech
             {
                 VoicePath = VoicePathBox.Text = data.SelectedPath;
 
-                开始录音.IsEnabled = true;
+                开始录音1.IsEnabled = true;
+                开始录音2.IsEnabled = true;
 
             }
             data.Dispose();
@@ -513,7 +520,7 @@ namespace TextToSpeech
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void RecordVoiceClick(object sender, RoutedEventArgs e)
+        private void RecordMicrophoneVoiceClick(object sender, RoutedEventArgs e)
         {
             string newID;
             if (CurrentRoleDataList == null || CurrentRoleDataList.Count == 0)
@@ -524,21 +531,47 @@ namespace TextToSpeech
             {
                 newID = Regex.Replace(CurrentRoleDataList[Convert.ToInt32(Local_Number.Text)].ID, MiaoRegexTool.路径非法字符, "");//路径不支持的格式要自动和谐掉
             }
-            nAudio.SetFilePath(VoicePath, newID);
-            nAudio.StartRec();
-            开始录音.IsEnabled = false;
+            nAudioMicrophone.SetFilePath(VoicePath, newID);
+            nAudioMicrophone.StartRec();
+            开始录音1.IsEnabled = false;
+            开始录音2.IsEnabled = false;
             停止录音.IsEnabled = true;
         }
 
+     
         /// <summary>
-        /// 结束录制麦克风声音
+        /// 开始录制电脑内部声音
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RecordComputerVoiceClick(object sender, RoutedEventArgs e)
+        {
+            string newID;
+            if (CurrentRoleDataList == null || CurrentRoleDataList.Count == 0)
+            {
+                newID = "temp";
+            }
+            else
+            {
+                newID = Regex.Replace(CurrentRoleDataList[Convert.ToInt32(Local_Number.Text)].ID, MiaoRegexTool.路径非法字符, "");//路径不支持的格式要自动和谐掉
+            }
+            nAudioSoundcard.SetFilePath(VoicePath, newID);
+            nAudioSoundcard.StartRec();
+            开始录音1.IsEnabled = false;
+            开始录音2.IsEnabled = false;
+            停止录音.IsEnabled = true;
+        }
+        /// <summary>
+        /// 结束录制声音
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void EndVoiceClick(object sender, RoutedEventArgs e)
         {
-            nAudio.StopRec();
-            开始录音.IsEnabled = true;
+            nAudioMicrophone.StopRec();
+            nAudioSoundcard.StopRec();
+            开始录音1.IsEnabled = true;
+            开始录音2.IsEnabled = true;
             停止录音.IsEnabled = false;
         }
 
