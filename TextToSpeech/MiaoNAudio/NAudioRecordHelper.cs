@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Threading;
 using NAudio.Wave;
 
 
@@ -41,15 +42,26 @@ public class WaveInEventFloat : EventArgs
     }
     public void ReAnalysis(WaveInEventArgs e)
     {
-        //this.samplesLength = RecordLength / 2;
-        var buffer = new WaveBuffer(e.Buffer);
-        //this.samples = new float[samplesLength];
-        samples = buffer.FloatBuffer;
-        //for (int index = 0; index < e.BytesRecorded/4;index++)
+        //this.samplesLength = e.BytesRecorded / 2;
+        //var buffer = new WaveBuffer(e.Buffer);
+        //samples = buffer.ShortBuffer;
+        //for (int index = 0; index < e.BytesRecorded / 4; index++)
         //{
-        //    samples[index] =  buffer.FloatBuffer[index];
+        //    var sample = buffer.FloatBuffer[index];
         //}
     }
+
+    //public void ReAnalysis(WaveInEventArgs e)
+    //{
+    //    this.samplesLength = e.BytesRecorded / 2;
+    //    var buffer = new WaveBuffer(e.Buffer);
+
+    //    samples = new float[buffer.FloatBuffer.Length];
+    //    for (int i = 0; i < buffer.FloatBuffer.Length; i++)
+    //    {
+    //        samples[i] = buffer.FloatBuffer[i] / 32768f;
+    //    }
+    //}
 
 }
 /// <summary>
@@ -62,7 +74,6 @@ public class NAudioRecordSoundcard
     public WaveFileWriter waveFile = null;
     public WaveInEventFloat cacheFloat;
     public event EventHandler<WaveInEventFloat> OnWaveRecording;
-    
     /// <summary>
     /// 录音结束后保存的文件路径
     /// </summary>
@@ -74,12 +85,14 @@ public class NAudioRecordSoundcard
     public void StartRec()
     {
         wasapiLoopbackCapture = new WasapiLoopbackCapture();
-        cacheFloat = new WaveInEventFloat(1);
+        cacheFloat = new WaveInEventFloat(2);
+        wasapiLoopbackCapture.WaveFormat = new WaveFormat(24000,16,2);
+
         //wasapiLoopbackCapture.WaveFormat;
         waveFile = new WaveFileWriter(filePath, wasapiLoopbackCapture.WaveFormat);
         wasapiLoopbackCapture.StartRecording();
-        wasapiLoopbackCapture.DataAvailable += WasapiLoopbackCapture_DataAvailable;
-        wasapiLoopbackCapture.RecordingStopped += WasapiLoopbackCapture_RecordingStopped;
+        wasapiLoopbackCapture.DataAvailable += new EventHandler<WaveInEventArgs>(WasapiLoopbackCapture_DataAvailable);
+        wasapiLoopbackCapture.RecordingStopped += new EventHandler<StoppedEventArgs>(WasapiLoopbackCapture_RecordingStopped);
     }
 
     private void WasapiLoopbackCapture_DataAvailable(object sender, WaveInEventArgs e)
@@ -87,9 +100,12 @@ public class NAudioRecordSoundcard
         if (waveFile != null)
         {
             waveFile.Write(e.Buffer, 0, e.BytesRecorded);
-            //waveFile.Flush();
-            //cacheFloat.ReAnalysis(e);
-            //OnWaveRecording.Invoke(this, cacheFloat);
+            waveFile.Flush();
+            cacheFloat.ReAnalysis(e.Buffer, e.BytesRecorded/32);
+
+            Application.Current.Dispatcher.Invoke(new Action(() => OnWaveRecording.Invoke(this, cacheFloat)));
+
+            //Application.Current.Dispatcher.BeginInvoke(new Action(()=> OnWaveRecording.Invoke(this, cacheFloat)));
         }
     }
 
@@ -133,12 +149,13 @@ public class NAudioRecorder
     {
         waveSource = new WaveIn();
         waveSource.WaveFormat = new WaveFormat(24000, 16, 1); // 24000rate,16bit,通道数
+        //waveSource.WaveFormat = new WaveFormat(48000, 32, 1); // 24000rate,16bit,通道数
         cacheFloat = new WaveInEventFloat(1);
         //waveSource.WaveFormat = new WaveFormat(8000, 16, 2); // 24000rate,16bit,通道数
         waveSource.DataAvailable += new EventHandler<WaveInEventArgs>(waveSource_DataAvailable);//撰写回调
         waveSource.RecordingStopped += new EventHandler<StoppedEventArgs>(waveSource_RecordingStopped);//停止回调  
         waveFile = new WaveFileWriter(filePath, waveSource.WaveFormat);
-        int length = waveSource.DeviceNumber;
+        int length = WaveIn.DeviceCount;
         if (length != 0)
         {
             waveSource.StartRecording();
@@ -170,7 +187,8 @@ public class NAudioRecorder
         if (waveFile != null)//数组的值是设定采样率，4个byte存一个float
         {
             waveFile.Write(e.Buffer, 0, e.BytesRecorded);
-            waveFile.Flush();
+            //waveFile.Flush();
+            //cacheFloat.ReAnalysis(e);
             cacheFloat.ReAnalysis(e.Buffer, e.BytesRecorded);
             OnWaveRecording.Invoke(this, cacheFloat);
         }

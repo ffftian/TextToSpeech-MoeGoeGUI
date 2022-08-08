@@ -46,7 +46,7 @@ namespace TextToSpeech
 
 
 
-        LoadModuleModel _vm = new LoadModuleModel();
+        LoadModuleModel _vm;
         public LoadModuleControl()
         {
             _vm = new LoadModuleModel();
