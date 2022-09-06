@@ -161,6 +161,9 @@
     <Compile Include="MainWindowModel.cs" />
     <Compile Include="MiaoAudio.Extras\LineWaveFormVisualization.cs" />
     <Compile Include="MiaoNAudio\NAudioRecordHelper.cs" />
+    <Compile Include="MoeGoeTextToSpeechControl.xaml.cs">
+      <DependentUpon>MoeGoeTextToSpeechControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TextTTool\LinqTool.cs" />
     <Compile Include="TextTTool\MiaoRegexTool.cs" />
     <Compile Include="TextTTool\TextData.cs" />
@@ -188,6 +191,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="MoeGoeTextToSpeechControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

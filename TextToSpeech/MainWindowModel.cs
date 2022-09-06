@@ -16,6 +16,7 @@ namespace TextToSpeech
         public LoadModuleModel()
         {
             selectedVisualization = new LineWaveFormVisualization();
+            
         }
 
 

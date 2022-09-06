@@ -9,44 +9,44 @@
              d:DesignHeight="700" d:DesignWidth="800">
 
     <Grid>
-        <GroupBox Header="文本" HorizontalAlignment="Left" Height="200" Margin="0,10,0,0" VerticalAlignment="Top" Width="782"/>
+        <GroupBox Header="文本" HorizontalAlignment="Left" Height="231" Margin="0,10,0,0" VerticalAlignment="Top" Width="782"/>
         <Label Content="载入文字" FontSize="14" HorizontalAlignment="Left" Margin="1,30,0,0" VerticalAlignment="Top"/>
         <TextBox Name="TextBox" HorizontalAlignment="Left" FontSize="14" Margin="72,32,0,0"  TextWrapping="NoWrap" VerticalAlignment="Top" Width="606" IsEnabled="False"></TextBox>
 
         <Button Name="BrowseButton" Content="浏览" FontSize="14" Margin="692,32,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="42"/>
-        <GroupBox Header="机器语音" HorizontalAlignment="Left" Height="225" Margin="0,215,0,0" VerticalAlignment="Top" Width="782"/>
-        <Label Content="角色选择" FontSize="14" HorizontalAlignment="Left" Margin="16,278,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.485,0.214"/>
-        <ComboBox Name="PlayerBoxList" HorizontalAlignment="Left" Margin="87,278,0,0" VerticalAlignment="Top" Width="299" RenderTransformOrigin="0.6,-0.143"></ComboBox>
-        <Label Content="已有语音" FontSize="14" HorizontalAlignment="Left" Margin="16,321,0,0" VerticalAlignment="Top"/>
-        <ComboBox Name="VoiceBoxList" HorizontalAlignment="Left" Margin="87,321,0,0" VerticalAlignment="Top" Width="299">
+        <GroupBox Header="机器语音" HorizontalAlignment="Left" Height="204" Margin="0,241,0,0" VerticalAlignment="Top" Width="782"/>
+        <Label Content="角色选择" FontSize="14" HorizontalAlignment="Left" Margin="16,304,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.485,0.214"/>
+        <ComboBox Name="PlayerBoxList" HorizontalAlignment="Left" Margin="87,304,0,0" VerticalAlignment="Top" Width="299" RenderTransformOrigin="0.6,-0.143"></ComboBox>
+        <Label Content="已有语音" FontSize="14" HorizontalAlignment="Left" Margin="16,347,0,0" VerticalAlignment="Top"/>
+        <ComboBox Name="VoiceBoxList" HorizontalAlignment="Left" Margin="87,347,0,0" VerticalAlignment="Top" Width="299">
             <ComboBoxItem>示例1</ComboBoxItem>
             <ComboBoxItem>示例2</ComboBoxItem>
             <ComboBoxItem>示例3</ComboBoxItem>
         </ComboBox>
 
-        <TextBox Name="VoicePathBox" HorizontalAlignment="Left" FontSize="14" Margin="280,243,0,0"  TextWrapping="NoWrap" VerticalAlignment="Top" Width="407"/>
-        <Button Name="BrowseButton2" Content="浏览" FontSize="14" Margin="692,243,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="42"/>
-        <Label Content="生成语音位置" FontSize="14" HorizontalAlignment="Left" Margin="181,243,0,0" VerticalAlignment="Top"/>
+        <TextBox Name="VoicePathBox" HorizontalAlignment="Left" FontSize="14" Margin="98,64,0,0"  TextWrapping="NoWrap" VerticalAlignment="Top" Width="579"/>
+        <Button Name="BrowseButton2" Content="浏览" FontSize="14" Margin="692,63,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="42"/>
+        <Label Content="语音保存位置" FontSize="14" HorizontalAlignment="Left" Margin="-1,64,0,0" VerticalAlignment="Top"/>
 
-        <Button Name="生成所有语音" Content="生成所有语音" HorizontalAlignment="Left" Margin="617,270,0,0" VerticalAlignment="Top" Width="117" Height="29" IsEnabled="False" />
-        <Button Name="测试播放语音" Content="测试播放语音" HorizontalAlignment="Left" Margin="500,270,0,0" VerticalAlignment="Top" Width="117" Height="29" IsEnabled="False" />
-        <Button Name="生成指定语音" Content="生成指定语音" HorizontalAlignment="Left" Margin="617,313,0,0" VerticalAlignment="Top" Width="117" Height="29" IsEnabled="False" />
+        <Button Name="生成所有语音" Content="生成所有语音" HorizontalAlignment="Left" Margin="617,296,0,0" VerticalAlignment="Top" Width="117" Height="29" IsEnabled="False" />
+        <Button Name="测试播放语音" Content="测试播放语音" HorizontalAlignment="Left" Margin="500,296,0,0" VerticalAlignment="Top" Width="117" Height="29" IsEnabled="False" />
+        <Button Name="生成指定语音" Content="生成指定语音" HorizontalAlignment="Left" Margin="617,339,0,0" VerticalAlignment="Top" Width="117" Height="29" IsEnabled="False" />
 
-        <GroupBox Header="人工语音" HorizontalAlignment="Left" Height="214" Margin="0,445,0,0" VerticalAlignment="Top" Width="782"/>
+        <GroupBox Header="人工语音" HorizontalAlignment="Left" Height="245" Margin="0,445,0,0" VerticalAlignment="Top" Width="782"/>
         <ContentPresenter Content="{Binding Visualization}" Margin="280,479,18,122" />
 
-        <Button Name="开始录音1" Content="开始录音（麦克风）" HorizontalAlignment="Left" Margin="536,608,0,0" VerticalAlignment="Top" Width="126" Height="36" />
-        <Button Name="开始录音2" Content="开始录音（电脑）" HorizontalAlignment="Left" Margin="536,578,0,0" VerticalAlignment="Top" Width="126" Height="35" />
-        <Button Name="停止录音" Content="停止录音" HorizontalAlignment="Left" Margin="667,608,0,0" VerticalAlignment="Top" Width="92" Height="36" IsEnabled="False"/>
-        <Label Content="语调更改" FontSize="14" HorizontalAlignment="Left" Margin="419,314,0,0" VerticalAlignment="Top"/>
-        <TextBox Name ="RateIuput" Text="0" FontSize="20" HorizontalAlignment="Left" Margin="500,313,0,0" VerticalAlignment="Top" Width="101"  HorizontalContentAlignment="Center" Height="29" />
+        <Button Name="开始录音1" Content="开始录音（麦克风）" HorizontalAlignment="Left" Margin="536,637,0,0" VerticalAlignment="Top" Width="126" Height="36" />
+        <Button Name="开始录音2" Content="开始录音（电脑）" HorizontalAlignment="Left" Margin="536,607,0,0" VerticalAlignment="Top" Width="126" Height="35" />
+        <Button Name="停止录音" Content="停止录音" HorizontalAlignment="Left" Margin="667,637,0,0" VerticalAlignment="Top" Width="92" Height="36" IsEnabled="False"/>
+        <Label Content="语调更改" FontSize="14" HorizontalAlignment="Left" Margin="419,340,0,0" VerticalAlignment="Top"/>
+        <TextBox Name ="RateIuput" Text="0" FontSize="20" HorizontalAlignment="Left" Margin="500,339,0,0" VerticalAlignment="Top" Width="101"  HorizontalContentAlignment="Center" Height="29" />
 
 
-        <TextBox Name="显示文本" HorizontalAlignment="Left" Height="91" Margin="409,117,0,0" TextWrapping="Wrap" Text="文字" VerticalAlignment="Top" Width="252" />
-        <Button Name ="Left"  Content="左" HorizontalAlignment="Left" Margin="410,94,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False"/>
-        <Button Name ="Right"  Content="右" HorizontalAlignment="Left" Margin="586,94,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False"/>
-        <TextBox Name ="Number"  Text="0" HorizontalAlignment="Left" Margin="485,94,0,0" VerticalAlignment="Top" Width="101"  HorizontalContentAlignment="Center"/>
-        <TextBox Name="ID" Text ="ID"  HorizontalAlignment="Left" FontSize="14" Margin="410,74,0,0"  TextWrapping="NoWrap" VerticalAlignment="Top" Width="251" HorizontalContentAlignment="Center"/>
+        <TextBox Name="显示文本" HorizontalAlignment="Left" Height="91" Margin="500,145,0,0" TextWrapping="Wrap" Text="文字" VerticalAlignment="Top" Width="252" />
+        <Button Name ="Left"  Content="左" HorizontalAlignment="Left" Margin="501,122,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False"/>
+        <Button Name ="Right"  Content="右" HorizontalAlignment="Left" Margin="677,122,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False"/>
+        <TextBox Name ="Number"  Text="0" HorizontalAlignment="Left" Margin="576,122,0,0" VerticalAlignment="Top" Width="101"  HorizontalContentAlignment="Center"/>
+        <TextBox Name="ID" Text ="ID"  HorizontalAlignment="Left" FontSize="14" Margin="501,102,0,0"  TextWrapping="NoWrap" VerticalAlignment="Top" Width="251" HorizontalContentAlignment="Center"/>
 
 
         <TextBox Name="局部显示文本" HorizontalAlignment="Left" Height="91" Margin="10,522,0,0" TextWrapping="Wrap" Text="文字" VerticalAlignment="Top" Width="252" />
@@ -54,8 +54,8 @@
         <Button Name ="Local_Right"  Content="右" HorizontalAlignment="Left" Margin="187,497,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False"/>
         <TextBox Name ="Local_Number"  Text="0" HorizontalAlignment="Left" Margin="85,497,0,0" VerticalAlignment="Top" Width="102"  HorizontalContentAlignment="Center" RenderTransformOrigin="0.713,0.882" IsEnabled="False"/>
         <TextBox Name="Local_ID" Text ="ID"  HorizontalAlignment="Left" FontSize="14" Margin="11,479,0,0"  TextWrapping="NoWrap" VerticalAlignment="Top" Width="251" HorizontalContentAlignment="Center"/>
-        <Button Name="SaveButton" Content="保存设置" FontSize="14" Margin="623,392,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="111"/>
-        <Label Content="文字总览" HorizontalAlignment="Center" Margin="485,52,214,0" VerticalAlignment="Top" Width="101" HorizontalContentAlignment="Center"/>
+        <Button Name="SaveButton" Content="保存设置" FontSize="14" Margin="623,418,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="111"/>
+        <Label Content="文字总览" HorizontalAlignment="Left" Margin="576,80,0,0" VerticalAlignment="Top" Width="101" HorizontalContentAlignment="Center"/>
 
 
 

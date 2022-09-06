@@ -5,15 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TextToSpeech"
         mc:Ignorable="d"
-        Title="跑团录音工具" Height="750" Width="800">
+        Title="跑团录音工具" Height="750" Width="1400">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="55*"/>
-            <ColumnDefinition Width="738*"/>
-        </Grid.ColumnDefinitions>
-        <TabControl HorizontalAlignment="Left" Height="700" Margin="10,10,0,-41" VerticalAlignment="Top" Width="772" Grid.ColumnSpan="2">
-            <TabItem Header="载入">
-                <local:LoadModuleControl/>
+        <TabControl HorizontalAlignment="Left" Height="700" Margin="10,10,0,-41" VerticalAlignment="Top" Width="800" Grid.ColumnSpan="2">
+            <TabItem Header="主要">
+                <local:LoadModuleControl x:Name="LoadModuleControl"/>
+            </TabItem>
+        </TabControl>
+        <TabControl HorizontalAlignment="Right" Height="700" Margin="10,10,0,-41" VerticalAlignment="Top" Width="600" Grid.ColumnSpan="2">
+            <TabItem Header="MoeGoeTextToSpeech">
+                <local:MoeGoeTextToSpeechControl x:Name="MoeGoeTextToSpeech"/>
             </TabItem>
         </TabControl>
     </Grid>

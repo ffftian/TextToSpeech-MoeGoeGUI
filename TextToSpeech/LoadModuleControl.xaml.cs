@@ -6,8 +6,10 @@ using System.Linq;
 using System.Speech.Synthesis;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Threading.Tasks;
 
 namespace TextToSpeech
 {
@@ -16,6 +18,8 @@ namespace TextToSpeech
     /// </summary>
     public partial class LoadModuleControl : UserControl
     {
+        public MainWindow MainWindow { get; set; }
+
         public List<TextData> textDataList;//存储所有文字的数据
         public List<TextData> CurrentRoleDataList;//存储当前角色文字的数据
 
@@ -29,13 +33,13 @@ namespace TextToSpeech
 
 
 
-        private string LogPath { get { return TextBox.Text; }set { TextBox.Text = value; } }//文字地址
-        private string PlayerQQ ;//玩家QQ号
-        private string PlayerName;//玩家名字
+        public string LogPath { get { return TextBox.Text; }set { TextBox.Text = value; } }//日志保存地址
+        public string PlayerQQ ;//玩家QQ号
+        public string PlayerName;//玩家名字
 
-        private string VoicePath { get { return VoicePathBox.Text; } set { VoicePathBox.Text = value; } }//语音地址
-        private string VoiceName;//语音名字
-        public string[] VoiceNameArry;//这条数组用于读取名称，因为我不懂TM如何把object转成正常的string，用 VoiceName = box.SelectedValue.tostring();转出来会多些东西，像是反射出的。
+        public string VoicePath { get { return VoicePathBox.Text; } set { VoicePathBox.Text = value; } }//语音保存地址
+        public string VoiceName;//语音名字
+        public string[] VoiceNameArray;//这条数组用于读取名称，因为我不懂TM如何把object转成正常的string，用 VoiceName = box.SelectedValue.tostring();转出来会多些东西，像是反射出的。
 
 
         public NAudioRecorder nAudioMicrophone;//语音录制
@@ -49,6 +53,7 @@ namespace TextToSpeech
         LoadModuleModel _vm;
         public LoadModuleControl()
         {
+
             _vm = new LoadModuleModel();
             nAudioMicrophone = new NAudioRecorder();
             nAudioSoundcard = new NAudioRecordSoundcard();
@@ -66,12 +71,13 @@ namespace TextToSpeech
             测试播放语音.Click += VoiceReciteTo;
             生成所有语音.Click += PlayerVoiceALLButtonClick;
             生成指定语音.Click += PlayerVoiceButtonClick;
-
+           
             //BrowseButton.Click += BoxClick;
             //BrowseButton2.Click += BoxClick;
             VoiceBoxList.SelectionChanged += BoxClick;
             PlayerBoxList.SelectionChanged += BoxClick;
             PlayerBoxList.SelectionChanged += LocalListSelcet;
+
 
             开始录音1.Click += RecordMicrophoneVoiceClick;
             开始录音2.Click += RecordComputerVoiceClick;
@@ -121,9 +127,14 @@ namespace TextToSpeech
             string Conetents = $"{LogPath}\n{PlayerQQ}\n{PlayerName}\n{VoicePath}\n{VoiceName}\n{Number.Text}\n{Local_Number.Text}";
             File.WriteAllText(System.Windows.Forms.Application.StartupPath + 配置文件, Conetents, Encoding.UTF8);
         }
-        public void SaveClick(object sender, RoutedEventArgs e)
+        public async void SaveClick(object sender, RoutedEventArgs e)
         {
             SaveConfig();
+            SaveButton.Content = "保存设置(完成)";
+            SaveButton.IsEnabled = false;
+            await Task.Delay(2000);
+            SaveButton.Content = "保存设置";
+            SaveButton.IsEnabled = true;
         }
 
 
@@ -285,7 +296,7 @@ namespace TextToSpeech
                 if (box.Name == VoiceBoxList.Name)
                 {
                     VoiceBoxList.SelectedItem = box.SelectedValue;//这Value是TM的方法。
-                    VoiceName = VoiceNameArry[box.SelectedIndex];
+                    VoiceName = VoiceNameArray[box.SelectedIndex];
                 }
                 else if (box.Name == PlayerBoxList.Name)//书覅有是玩家选择栏
                 {
@@ -382,21 +393,21 @@ namespace TextToSpeech
         {
 
             #region 让玩家选择一个txt并填入TxtData中
-            System.Windows.Forms.OpenFileDialog data = new System.Windows.Forms.OpenFileDialog();
+            System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog();
 
-            data.Filter = "(*.txt)|*.txt|All files (*.*)|*.*";
+            openFileDialog.Filter = "(*.txt)|*.txt|All files (*.*)|*.*";
 
-            //   data.ShowDialog();
-            if (data.ShowDialog() == System.Windows.Forms.DialogResult.OK)//用于指示让文件夹展开对文件选中才允许运行。
+            //   openFileDialog.ShowDialog();
+            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)//用于指示让文件夹展开对文件选中才允许运行。
             {
-                StreamReader streamReader = new StreamReader(data.OpenFile(), Encoding.UTF8);
+                StreamReader streamReader = new StreamReader(openFileDialog.OpenFile(), Encoding.UTF8);
                 string tempData = streamReader.ReadToEnd();
-                LogPath = TextBox.Text = data.FileName;//取得名称并输入到界面上。
+                LogPath = TextBox.Text = openFileDialog.FileName;//取得名称并输入到界面上。
 
                 #endregion
             TextAnalysis(tempData);
             }
-            data.Dispose();
+            openFileDialog.Dispose();
 
             // 是否满足生成条件();
         }
@@ -411,7 +422,7 @@ namespace TextToSpeech
 
             if (data.ShowDialog() == System.Windows.Forms.DialogResult.OK)//用于指示让文件夹展开对文件筐。
             {
-                VoicePath = VoicePathBox.Text = data.SelectedPath;
+                VoicePath = data.SelectedPath;
 
                 开始录音1.IsEnabled = true;
                 开始录音2.IsEnabled = true;
@@ -495,12 +506,12 @@ namespace TextToSpeech
         public void InitVoiceEngine()
         {
             VoiceBoxList.Items.Clear();
-            VoiceNameArry = new string[narratorcobj.synth.GetInstalledVoices().Count];
+            VoiceNameArray = new string[narratorcobj.synth.GetInstalledVoices().Count];
 
 
             for (int a = 0; a < narratorcobj.synth.GetInstalledVoices().Count; a++)
             {
-                VoiceNameArry[a] = narratorcobj.synth.GetInstalledVoices()[a].VoiceInfo.Name;
+                VoiceNameArray[a] = narratorcobj.synth.GetInstalledVoices()[a].VoiceInfo.Name;
             }
             //test
             var t = narratorcobj.synth.GetInstalledVoices();
