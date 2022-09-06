@@ -5,15 +5,17 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows;
 
 namespace TextToSpeech
 {
+    public delegate void OnOutputHandler(CommandLine sender, string e);
     public class CommandLine
     {
         public readonly Process process;
 
-        public delegate void onOutputHandler(CommandLine sender, string e);
-        public event onOutputHandler OutputHandler;
+        public event OnOutputHandler OutputHandler;
         public CommandLine()
         {
             try
@@ -30,7 +32,7 @@ namespace TextToSpeech
                         CreateNoWindow = true
                     }
                 };
-                process.OutputDataReceived += Command_OutputDataReceived;
+                //process.OutputDataReceived += Command_OutputDataReceived;
                 process.ErrorDataReceived += Command_ErrorDataReceived;
                 process.Start();
                 process.BeginOutputReadLine();
@@ -40,6 +42,10 @@ namespace TextToSpeech
             {
                 Trace.WriteLine(e.Message);
             }
+        }
+         ~CommandLine()
+        {
+            process.Dispose();
         }
 
         void Command_ErrorDataReceived(object sender, DataReceivedEventArgs e)
@@ -70,47 +76,53 @@ namespace TextToSpeech
         }
     }
 
-    public class MoeGoeOutPut
-    {
-        public CommandLine cmd = new CommandLine();
+    //public class MoeGoeOutPut
+    //{
+    //    public EventHandler<string> eventHandler;
+    //    public CommandLine cmd = new CommandLine();
+    //    private TextBox textBox;
+    //    public MoeGoeOutPut(string EXEPATH, string MODELPATH, string CONFIGPATH, TextBox textBox)
+    //    {
+    //        cmd.OutputHandler += Cmd_OutputHandler;
+    //        this.textBox = textBox;
+    //        cmd.Write("\"" + EXEPATH + "\"");
+    //        cmd.Write(MODELPATH);
+    //        cmd.Write(CONFIGPATH);
+    //    }
 
-        public MoeGoeOutPut(string EXEPATH, string MODELPATH, string CONFIGPATH)
-        {
-            cmd.OutputHandler += Cmd_OutputHandler;
-            cmd.Write("\"" + EXEPATH + "\"");
-            cmd.Write(MODELPATH);
-            cmd.Write(CONFIGPATH);
-        }
-
-
-        /// <summary>
-        /// 保存tts，理论上这样就可以了
-        /// </summary>
-        /// <param name="Path"></param>
-        public void OutPutTTS(string text,string SAVEPATH)
-        {
-            cmd.Write("t");
-            cmd.Write(Regex.Replace(text, @"\r?\n", " "));
-            cmd.Write(SAVEPATH);
-            cmd.Write("y");
-        }
-        /// <summary>
-        /// 保存音频转换
-        /// </summary>
-        public void OutPutVC()
-        {
+    //    private void Cmd_OutputHandler(CommandLine sender, string e)
+    //    {
+    //        Application.Current.Dispatcher.Invoke(new Action(()=> textBox.Text = e));
+    //    }
 
 
-        }
 
-        private void Cmd_OutputHandler(CommandLine sender, string e)
-        {
+    //    /// <summary>
+    //    /// 保存tts，理论上这样就可以了
+    //    /// </summary>
+    //    /// <param name="Path"></param>
+    //    public async void OutPutTTS(string text,string savePath)
+    //    {
+    //        cmd.Write("t");
+    //        await Task.Delay(1000);
+    //        cmd.Write(Regex.Replace(text, @"\r?\n", " "));
+    //        await Task.Delay(1000);
+    //        cmd.Write(savePath);
+    //        await Task.Delay(1000);
+    //        cmd.Write("y");
+    //    }
+    //    /// <summary>
+    //    /// 保存音频转换
+    //    /// </summary>
+    //    public void OutPutVC()
+    //    {
 
-        }
 
-        ~MoeGoeOutPut()
-        {
-            cmd.process.Close();
-        }
-    }
+    //    }
+
+    //    ~MoeGoeOutPut()
+    //    {
+    //        cmd.process.Close();
+    //    }
+    //}
 }

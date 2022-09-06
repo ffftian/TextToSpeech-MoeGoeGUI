@@ -464,13 +464,26 @@ namespace TextToSpeech
         {
             VoiceProduction();
         }
+        public string GetRoleDialogueID
+        {
+            get
+            {
+                return Regex.Replace(CurrentRoleDataList[int.Parse(Local_Number.Text)].ID, MiaoRegexTool.路径非法字符, "");
+            }
+        }
+        public string GetRoleDialogue
+        {
+            get
+            {
+                return CurrentRoleDataList[int.Parse(Local_Number.Text)].Log.Replace("@", "at");
+            }
+        }
+
+
         private void PlayerVoiceButtonClick(object sender, RoutedEventArgs e)
         {
-
-
-
-            var newID = Regex.Replace(CurrentRoleDataList[int.Parse(Local_Number.Text)].ID, MiaoRegexTool.路径非法字符, "");//路径不支持的格式要自动和谐掉
-            var newLog = CurrentRoleDataList[int.Parse(Local_Number.Text)].Log.Replace("@", "at");//@处理成at
+            string newID = GetRoleDialogueID;//路径不支持的格式要自动和谐掉
+            string newLog = GetRoleDialogue;//@处理成at
             narratorcobj.SaveToWave(VoicePath, newID, newLog);
 
             // var newID = Regex.Replace(item.ID, RegexTool.匹配路径非法字符, "");//路径不支持的格式要自动和谐掉

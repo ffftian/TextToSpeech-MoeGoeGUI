@@ -161,6 +161,7 @@
     <Compile Include="MainWindowModel.cs" />
     <Compile Include="MiaoAudio.Extras\LineWaveFormVisualization.cs" />
     <Compile Include="MiaoNAudio\NAudioRecordHelper.cs" />
+    <Compile Include="MoeGoeOutPut.cs" />
     <Compile Include="MoeGoeTextToSpeechControl.xaml.cs">
       <DependentUpon>MoeGoeTextToSpeechControl.xaml</DependentUpon>
     </Compile>
