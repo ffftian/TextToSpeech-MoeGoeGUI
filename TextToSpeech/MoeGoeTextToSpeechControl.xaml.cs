@@ -38,6 +38,27 @@ namespace TextToSpeech
         private string ConfigPath { get { return ConfigPathBox.Text; } set { ConfigPathBox.Text = value; } }
 
         public int Pattern { get { return PatternBox.SelectedIndex; } set { PatternBox.SelectedIndex = value; } }
+
+        private string RateLength
+        {
+            get
+            {
+                return $"[LENGTH={RateSlider.Value}]";
+            }
+        }
+        private int CreateCount
+        {
+            get
+            {
+                return (int)CountSlider.Value;
+            }
+            set
+            {
+                CountSlider.Value = value;
+                CountInput.Text = value.ToString();
+            }
+        }
+
         /// <summary>
         /// 朗读者朗读数据
         /// </summary>
@@ -48,7 +69,23 @@ namespace TextToSpeech
         //public MoeGoeOutPut moeGoeOutPut;
         const string MoeGoe配置文件 = "\\MoeGoe配置文件.txt";
 
-        
+        private bool generateLock = false;
+        public bool GenerateComplete
+        {
+            get
+            {
+                
+                return generateLock;
+            }
+            set
+            {
+                生成指定语音.IsEnabled = value;
+                //生成所有语音.IsEnabled = value;
+                generateLock = value;
+            }
+        }
+
+
 
         public MoeGoeTextToSpeechControl()
         {
@@ -62,18 +99,29 @@ namespace TextToSpeech
 
             生成指定语音.Click += 生成指定语音_Click;
             生成指定语音.IsEnabled = false;
-            生成所有语音.Click += 生成所有语音_Click;
-            生成所有语音.IsEnabled = false;
+            //生成所有语音.Click += 生成所有语音_Click;
+            //生成所有语音.IsEnabled = false;
 
             启用语音生成控制台.Click += 启用语音生成控制台_Click;
-
-            RateIuput.TextInput += RateIuput_TextInput;
-            RateIuput.TextChanged += RateIuput_TextChanged;
+            RateSlider.ValueChanged += RateSlider_ValueChanged;
+            CountSlider.ValueChanged += NumberSlider_ValueChanged;
+            //RateIuput.TextChanged += RateIuput_TextChanged;
 
             SpeakerText.TextChanged += SpeakerText_TextChanged;
             
         }
 
+        private void NumberSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            CountInput.Text = ((int)e.NewValue).ToString();
+        }
+
+        private void RateSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            //RateInput.Text = e.NewValue;
+            RateInput.Text = String.Format("{0:F}", e.NewValue);
+            
+        }
 
         public void InitializeBindWindow()
         {
@@ -120,7 +168,7 @@ namespace TextToSpeech
         }
 
         /// <summary>
-        /// 角色切换时读取文本
+        /// 角色切换时读取新文本
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -135,8 +183,9 @@ namespace TextToSpeech
             }
             if (!string.IsNullOrEmpty(currentName))
             {
-                DeserializeCasheData(ConvertToPath(lastName));
+                DeserializeCasheData(ConvertToPath(currentName));
             }
+            Local_Number_TextChanged(null, null);
         }
 
 
@@ -184,37 +233,22 @@ namespace TextToSpeech
         }
 
 
-        private void RateIuput_TextChanged(object sender, TextChangedEventArgs e)
-        {
+        //private void RateIuput_TextChanged(object sender, TextChangedEventArgs e)
+        //{
+        //    //Regex re = new Regex("^[0-9]+$");
+        //    //Regex re = new Regex(@"[^\d]*");
+        //    TextBox s = e.Source as TextBox;
+        //    s.Text = Regex.Replace(s.Text, @"[^\d]*", "");
 
-            //Regex re = new Regex("^[0-9]+$");
-            //Regex re = new Regex(@"[^\d]*");
-            TextBox s = e.Source as TextBox;
-            s.Text = Regex.Replace(s.Text, @"[^\d]*", "");
-
-            //if (re.IsMatch(s))
-            //{
-            //    e.Handled = true;
-            //}
-            //else
-            //{
-            //    e.Handled = false;
-            //}
-        }
-
-        private void RateIuput_TextInput(object sender, TextCompositionEventArgs e)
-        {
-            Regex re = new Regex("^[0-9]+$");
-            if (re.IsMatch(e.Text))
-            {
-                e.Handled = true;
-            }
-            else
-            {
-                e.Handled = false;
-            }
-        }
-
+        //    //if (re.IsMatch(s))
+        //    //{
+        //    //    e.Handled = true;
+        //    //}
+        //    //else
+        //    //{
+        //    //    e.Handled = false;
+        //    //}
+        //}
         /// <summary>
         /// 主要的语音合成启动
         /// </summary>
@@ -283,24 +317,40 @@ namespace TextToSpeech
         }
         private void Cmd_ErrorHandler(CommandLine sender, DataReceivedEventArgs e)
         {
-            Application.Current.Dispatcher.Invoke(() => Debug输出.Text = e.Data);
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Debug输出.Text = e.Data;
+                //完成输出
+                if ("Speaker ID: Path to save: Successfully saved!" == e.Data)
+                {
+                    GenerateComplete = true;
+                }
+            }
+            );
         }
 
         public void LoadConfig()
         {
-            if (File.Exists(System.Windows.Forms.Application.StartupPath + MoeGoe配置文件))
+            try
             {
-                string[] Setting = File.ReadAllLines((System.Windows.Forms.Application.StartupPath + MoeGoe配置文件));
-                MoeGoePath = Setting[0];
-                ModelPath = Setting[1];
-                ConfigPath = Setting[2];
-                Pattern = int.Parse(Setting[3]);
+                if (File.Exists(System.Windows.Forms.Application.StartupPath + MoeGoe配置文件))
+                {
+                    string[] Setting = File.ReadAllLines((System.Windows.Forms.Application.StartupPath + MoeGoe配置文件));
+                    MoeGoePath = Setting[0];
+                    ModelPath = Setting[1];
+                    ConfigPath = Setting[2];
+                    Pattern = int.Parse(Setting[3]);
+                    RateSlider.Value = double.Parse(Setting[4]);
+                    RateInput.Text = Setting[4];
+                    CreateCount = int.Parse(Setting[5]);
+                }
             }
+            catch { }
             AnalyzePath();
         }
         public void SaveConfig()
         {
-            string Conetents = $"{MoeGoePath}\n{ModelPath}\n{ConfigPath}\n{Pattern}";
+            string Conetents = $"{MoeGoePath}\n{ModelPath}\n{ConfigPath}\n{Pattern}\n{RateSlider.Value}\n{CreateCount}";
             File.WriteAllText(System.Windows.Forms.Application.StartupPath + MoeGoe配置文件, Conetents, Encoding.UTF8);
         }
 
@@ -312,22 +362,49 @@ namespace TextToSpeech
 
         private void 生成指定语音_Click(object sender, RoutedEventArgs e)
         {
-            string savePath = System.IO.Path.Combine(LoadModuleControl.VoicePath, LoadModuleControl.GetRoleDialogueID + ".wav");
+            if (CreateCount == 1)
+            {
+                string savePath = System.IO.Path.Combine(LoadModuleControl.VoicePath, LoadModuleControl.GetRoleDialogueID + ".wav");
+                CreateMoeGoeTTS(savePath);
+            }
+            else
+            {
+                string saveFolder = System.IO.Path.Combine(LoadModuleControl.VoicePath, LoadModuleControl.GetRoleDialogueID);
+                CreateMultipleMoeGoeTTS(saveFolder, CreateCount);
+            }
+        }
 
+        public void CreateMultipleMoeGoeTTS(string saveFolder, int Count)
+        {
+
+        }
+
+        public void CreateMoeGoeTTS(string savePath)
+        {
+          
+            GenerateComplete = false;
             switch (Pattern)
             {
                 case 0:
-                    TTS("[ZH]" + LoadModuleControl.GetRoleDialogue + "[ZH]");
+                    TTS($"{RateLength}[ZH]{SpeakerText.Text}[ZH]");
+                    //TTS("[ZH]" + LoadModuleControl.GetRoleDialogue + "[ZH]");
                     break;
                 case 1:
-                    TTS("[JA]" + LoadModuleControl.GetRoleDialogue + "[JA]");
+                    TTS($"{RateLength}[JA]{SpeakerText.Text}[JA]");
+                    //TTS("[JA]" + LoadModuleControl.GetRoleDialogue + "[JA]");
                     break;
                 case 2:
-                    TTS(LoadModuleControl.GetRoleDialogue);
+                    TTS($"{RateLength}{SpeakerText.Text}");
+                    //TTS(LoadModuleControl.GetRoleDialogue);
                     break;
             }
             cmd.Write(savePath);
             cmd.Write("y");//要有输出完成回调
+            //SpeakerText.Text
+        }
+        private void 生成所有语音_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("生成所有语音需要较长时间，请不要关闭窗口，生成完成时将有弹窗提示","提示",MessageBoxButton.OK,MessageBoxImage.Information);
 
         }
 
@@ -340,10 +417,7 @@ namespace TextToSpeech
         }
 
 
-        private void 生成所有语音_Click(object sender, RoutedEventArgs e)
-        {
 
-        }
 
         private void OpenMoeGoe_Click(object sender, RoutedEventArgs e)
         {

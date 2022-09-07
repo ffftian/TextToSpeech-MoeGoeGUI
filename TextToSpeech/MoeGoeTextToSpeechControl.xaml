@@ -16,8 +16,13 @@
         <TextBox Name="ModelPathBox" HorizontalAlignment="Left" FontSize="14" Margin="67,57,0,0"  TextWrapping="NoWrap" VerticalAlignment="Top" Width="523"/>
         <Button Name="OpenConfig" Content="配置目录" HorizontalAlignment="Left" Margin="10,82,0,0" VerticalAlignment="Top"/>
         <TextBox Name="ConfigPathBox" HorizontalAlignment="Left" FontSize="14" Margin="67,82,0,0"  TextWrapping="NoWrap" VerticalAlignment="Top" Width="523"/>
-        <Button x:Name="生成所有语音" Content="生成所有语音" HorizontalAlignment="Left" Margin="473,126,0,0" VerticalAlignment="Top" Width="117" Height="28" />
-        <Button x:Name="生成指定语音" Content="生成指定语音" HorizontalAlignment="Left" Margin="473,159,0,0" VerticalAlignment="Top" Width="117" Height="28" />
+
+        <Button x:Name="生成所有语音" Content="生成所有语音" HorizontalAlignment="Left" Margin="467,329,0,0" VerticalAlignment="Top" Width="117" Height="28" IsEnabled="False" />
+        <Button x:Name="生成指定语音" Content="生成指定语音" HorizontalAlignment="Left" Margin="474,142,0,0" VerticalAlignment="Top" Width="117" Height="28" />
+        <Slider Name="CountSlider" HorizontalAlignment="Left" Margin="474,175,0,0" VerticalAlignment="Top" Width="120" Value="1" Minimum="1" Maximum="20" SmallChange="0"/>
+        <Label Content="生成次数" FontSize="14" HorizontalAlignment="Left" Margin="377,170,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.485,0.214"/>
+        <TextBox x:Name ="CountInput" Text="1" FontSize="20" HorizontalAlignment="Left" Margin="438,170,0,0" VerticalAlignment="Top" Width="31"  HorizontalContentAlignment="Center" Height="30" IsEnabled="False" />
+        
         <Button x:Name="启用语音生成控制台" Content="启用语音生成控制台" HorizontalAlignment="Left" Margin="10,112,0,0" VerticalAlignment="Top" Width="117" Height="28" />
 
         <Label Content="角色选择" FontSize="14" HorizontalAlignment="Left" Margin="12,145,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.485,0.214"/>
@@ -32,10 +37,12 @@
             <ComboBoxItem>日文</ComboBoxItem>
             <ComboBoxItem>手动</ComboBoxItem>
         </ComboBox>
-        
+
         <Label Content="时长" FontSize="14" HorizontalAlignment="Left" Margin="162,168,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.485,0.214"/>
-        <TextBox Name ="RateIuput" Text="0" FontSize="20" HorizontalAlignment="Left" Margin="232,167,0,0" VerticalAlignment="Top" Width="100"  HorizontalContentAlignment="Center" Height="29" />
-   
+        <TextBox Name ="RateInput" Text="1" FontSize="20" HorizontalAlignment="Left" Margin="200,171,0,0" VerticalAlignment="Top" Width="31"  HorizontalContentAlignment="Center" Height="29" IsEnabled="False" />
+        <Slider Name="RateSlider" HorizontalAlignment="Left" Margin="236,176,0,0" VerticalAlignment="Top" Width="120" Maximum="5" LargeChange="0.5" Value="1"/>
+        <Label Content="由于神经网络每次生成音频音调都是完全不同的情况，一键生成所有文本状态很差，不提供" HorizontalAlignment="Left" Margin="-4,330,0,0" VerticalAlignment="Top"/>
+
 
     </Grid>
 </UserControl>

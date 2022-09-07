@@ -92,7 +92,7 @@ public class NAudioRecordSoundcard
             //waveFile.Flush();
             cacheFloat.ReAnalysis(e.Buffer, e.BytesRecorded);
 
-            Application.Current.Dispatcher.Invoke(new Action(() => OnWaveRecording.Invoke(this, cacheFloat)));
+            Application.Current.Dispatcher.Invoke(() => OnWaveRecording.Invoke(this, cacheFloat));
 
             //Application.Current.Dispatcher.BeginInvoke(new Action(()=> OnWaveRecording.Invoke(this, cacheFloat)));
         }
