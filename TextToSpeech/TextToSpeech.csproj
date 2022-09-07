@@ -152,6 +152,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CommandLine.cs" />
     <Compile Include="LineWaveFormControl.xaml.cs">
       <DependentUpon>LineWaveFormControl.xaml</DependentUpon>
     </Compile>
@@ -161,7 +162,6 @@
     <Compile Include="MainWindowModel.cs" />
     <Compile Include="MiaoAudio.Extras\LineWaveFormVisualization.cs" />
     <Compile Include="MiaoNAudio\NAudioRecordHelper.cs" />
-    <Compile Include="MoeGoeOutPut.cs" />
     <Compile Include="MoeGoeTextToSpeechControl.xaml.cs">
       <DependentUpon>MoeGoeTextToSpeechControl.xaml</DependentUpon>
     </Compile>

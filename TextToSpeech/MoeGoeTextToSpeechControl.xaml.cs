@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -35,13 +37,25 @@ namespace TextToSpeech
         private string ModelPath { get { return ModelPathBox.Text; } set { ModelPathBox.Text = value; } }
         private string ConfigPath { get { return ConfigPathBox.Text; } set { ConfigPathBox.Text = value; } }
 
+        public int Pattern { get { return PatternBox.SelectedIndex; } set { PatternBox.SelectedIndex = value; } }
+        /// <summary>
+        /// 朗读者朗读数据
+        /// </summary>
+        public string[] SpeakerTextData;
+        //public int Rate { get { return RateIuput} }
+
         public CommandLine cmd;
         //public MoeGoeOutPut moeGoeOutPut;
         const string MoeGoe配置文件 = "\\MoeGoe配置文件.txt";
+
+        
+
         public MoeGoeTextToSpeechControl()
         {
+
             InitializeComponent();
-            InitConfig();
+            LoadConfig();
+            InitSpeakerTextCashe();
             OpenEXE.Click += OpenMoeGoe_Click;
             OpenModel.Click += OpenModel_Click;
             OpenConfig.Click += OpenConfig_Click;
@@ -52,7 +66,155 @@ namespace TextToSpeech
             生成所有语音.IsEnabled = false;
 
             启用语音生成控制台.Click += 启用语音生成控制台_Click;
+
+            RateIuput.TextInput += RateIuput_TextInput;
+            RateIuput.TextChanged += RateIuput_TextChanged;
+
+            SpeakerText.TextChanged += SpeakerText_TextChanged;
+            
         }
+
+
+        public void InitializeBindWindow()
+        {
+            LoadModuleControl.SaveButton.Click += OnSaveButton;
+            LoadModuleControl.PlayerBoxList.SelectionChanged += PlayerBoxList_SelectionChanged;
+            LoadModuleControl.Local_Number.TextChanged += Local_Number_TextChanged;
+            //Item绑定时不会触发Button的呼叫
+            DeserializeCasheData(SpeakerTextPath);
+            Local_Number_TextChanged(null, null);
+
+        }
+        /// <summary>
+        /// 索引此时已经被LoadModule中的处理显示Text变更
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Local_Number_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            SpeakerText.Text = SpeakerTextData[LoadModuleControl.Local_Ptr];
+        }
+
+        /// <summary>
+        /// 朗读框文本变更
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SpeakerText_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ///文本内容更改赋值给保存数组
+           SpeakerTextData[LoadModuleControl.Local_Ptr] = SpeakerText.Text;
+        }
+
+        string SpeakerTextPath
+        {
+            get
+            {
+                return $"{System.Environment.CurrentDirectory}\\Cashe\\{LoadModuleControl.LogFileName}-{LoadModuleControl.PlayerName}({LoadModuleControl.PlayerQQ}).txt";
+            }
+        }
+
+        public string ConvertToPath(string name)
+        {
+            return $"{System.Environment.CurrentDirectory}\\Cashe\\{LoadModuleControl.LogFileName}-{name}.txt";
+        }
+
+        /// <summary>
+        /// 角色切换时读取文本
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PlayerBoxList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var lastName = (e.RemovedItems[0] as ComboBoxItem).Content.ToString();//上一项
+            var currentName = (e.AddedItems[0] as ComboBoxItem).Content.ToString();//这一项
+
+            if (!string.IsNullOrEmpty(lastName))
+            {
+                SerializableCasheData(ConvertToPath(lastName));
+            }
+            if (!string.IsNullOrEmpty(currentName))
+            {
+                DeserializeCasheData(ConvertToPath(lastName));
+            }
+        }
+
+
+
+        public void InitSpeakerTextCashe()
+        {
+            string path = $"{System.Windows.Forms.Application.StartupPath}\\Cashe";
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+        }
+
+        /// <summary>
+        /// 序列化并保存当前朗读者文本
+        /// </summary>
+        public void SerializableCasheData(string path)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            FileStream stream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            formatter.Serialize(stream, SpeakerTextData);
+            stream.Close();
+          
+        }
+        /// <summary>
+        /// 读取保存的序列化文本
+        /// </summary>
+        public void DeserializeCasheData(string path)
+        {
+            if (!File.Exists(path))
+            {
+                SpeakerTextData = new string[LoadModuleControl.CurrentRoleDataList.Count];
+                for (int i = 0; i < SpeakerTextData.Length; i++)
+                {
+                    SpeakerTextData[i] = LoadModuleControl.CurrentRoleDataList[i].Log;
+                }
+            }
+            else
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                FileStream stream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Read);
+                SpeakerTextData = (string[])formatter.Deserialize(stream);
+                stream.Close();
+            }
+        }
+
+
+        private void RateIuput_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+            //Regex re = new Regex("^[0-9]+$");
+            //Regex re = new Regex(@"[^\d]*");
+            TextBox s = e.Source as TextBox;
+            s.Text = Regex.Replace(s.Text, @"[^\d]*", "");
+
+            //if (re.IsMatch(s))
+            //{
+            //    e.Handled = true;
+            //}
+            //else
+            //{
+            //    e.Handled = false;
+            //}
+        }
+
+        private void RateIuput_TextInput(object sender, TextCompositionEventArgs e)
+        {
+            Regex re = new Regex("^[0-9]+$");
+            if (re.IsMatch(e.Text))
+            {
+                e.Handled = true;
+            }
+            else
+            {
+                e.Handled = false;
+            }
+        }
+
         /// <summary>
         /// 主要的语音合成启动
         /// </summary>
@@ -62,14 +224,20 @@ namespace TextToSpeech
         {
             cmd = new CommandLine();
             cmd.OutputHandler += Cmd_OutputHandler;
+            cmd.ErrorHandler += Cmd_ErrorHandler;
             cmd.Write("\"" + MoeGoePath + "\"");
             cmd.Write(ModelPath);
             cmd.Write(ConfigPath);
-            //moeGoeOutPut = new MoeGoeOutPut(MoeGoePath, ModelPath, ConfigPath,Debug输出);
+            启用语音生成控制台.IsEnabled = false;
+            OpenEXE.IsEnabled = false;
+            OpenModel.IsEnabled = false;
+            OpenConfig.IsEnabled = false;
+
             生成指定语音.IsEnabled = true;
             生成所有语音.IsEnabled = true;
             AnalyzeRole();
         }
+
         private void AnalyzeRole()
         {
             string json = File.ReadAllText(ConfigPath);
@@ -94,18 +262,31 @@ namespace TextToSpeech
 
         }
 
-
-        private void Cmd_OutputHandler(CommandLine sender, string e)
+        private bool AnalyzePath()
         {
-            Application.Current.Dispatcher.Invoke(new Action(() => Debug输出.Text = e));
+            if (string.IsNullOrEmpty(MoeGoePath) || string.IsNullOrEmpty(ModelPath) || string.IsNullOrEmpty(ConfigPath))
+            {
+                启用语音生成控制台.IsEnabled = false;
+                return false;
+            }
+            else
+            {
+                启用语音生成控制台.IsEnabled = true;
+                return true;
+            }
         }
 
-        public void InitializeBindWindow()
+        private void Cmd_OutputHandler(CommandLine sender, DataReceivedEventArgs e)
         {
-            LoadModuleControl.SaveButton.Click += SaveButton_Click;
+            string value = e.Data;
+           
+        }
+        private void Cmd_ErrorHandler(CommandLine sender, DataReceivedEventArgs e)
+        {
+            Application.Current.Dispatcher.Invoke(() => Debug输出.Text = e.Data);
         }
 
-        public void InitConfig()
+        public void LoadConfig()
         {
             if (File.Exists(System.Windows.Forms.Application.StartupPath + MoeGoe配置文件))
             {
@@ -113,19 +294,38 @@ namespace TextToSpeech
                 MoeGoePath = Setting[0];
                 ModelPath = Setting[1];
                 ConfigPath = Setting[2];
+                Pattern = int.Parse(Setting[3]);
             }
+            AnalyzePath();
+        }
+        public void SaveConfig()
+        {
+            string Conetents = $"{MoeGoePath}\n{ModelPath}\n{ConfigPath}\n{Pattern}";
+            File.WriteAllText(System.Windows.Forms.Application.StartupPath + MoeGoe配置文件, Conetents, Encoding.UTF8);
         }
 
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        private void OnSaveButton(object sender, RoutedEventArgs e)
         {
-            string Conetents = $"{MoeGoePath}\n{ModelPath}\n{ConfigPath}";
-            File.WriteAllText(System.Windows.Forms.Application.StartupPath + MoeGoe配置文件, Conetents, Encoding.UTF8);
+            SaveConfig();
+            SerializableCasheData(SpeakerTextPath);
         }
 
         private void 生成指定语音_Click(object sender, RoutedEventArgs e)
         {
             string savePath = System.IO.Path.Combine(LoadModuleControl.VoicePath, LoadModuleControl.GetRoleDialogueID + ".wav");
-            TTS("[ZH]" + LoadModuleControl.GetRoleDialogue + "[ZH]");
+
+            switch (Pattern)
+            {
+                case 0:
+                    TTS("[ZH]" + LoadModuleControl.GetRoleDialogue + "[ZH]");
+                    break;
+                case 1:
+                    TTS("[JA]" + LoadModuleControl.GetRoleDialogue + "[JA]");
+                    break;
+                case 2:
+                    TTS(LoadModuleControl.GetRoleDialogue);
+                    break;
+            }
             cmd.Write(savePath);
             cmd.Write("y");//要有输出完成回调
 
@@ -154,6 +354,7 @@ namespace TextToSpeech
             if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 MoeGoePath = openFileDialog.FileName;
+                AnalyzePath();
             }
             openFileDialog.Dispose();
 
@@ -168,6 +369,7 @@ namespace TextToSpeech
             if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 ModelPath = ofd.FileName;
+                AnalyzePath();
             }
             ofd.Dispose();
         }
@@ -181,6 +383,7 @@ namespace TextToSpeech
             if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 ConfigPath = ofd.FileName;
+                AnalyzePath();
             }
             ofd.Dispose();
         }

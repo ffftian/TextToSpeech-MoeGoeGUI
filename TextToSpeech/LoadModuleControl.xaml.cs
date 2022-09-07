@@ -33,7 +33,9 @@ namespace TextToSpeech
 
 
 
-        public string LogPath { get { return TextBox.Text; }set { TextBox.Text = value; } }//日志保存地址
+        public string LogFilePath { get { return TextBox.Text; }set { TextBox.Text = value; } }//日志保存地址
+        public string LogFileName;
+
         public string PlayerQQ ;//玩家QQ号
         public string PlayerName;//玩家名字
 
@@ -41,6 +43,7 @@ namespace TextToSpeech
         public string VoiceName;//语音名字
         public string[] VoiceNameArray;//这条数组用于读取名称，因为我不懂TM如何把object转成正常的string，用 VoiceName = box.SelectedValue.tostring();转出来会多些东西，像是反射出的。
 
+        public int Local_Ptr { get; set; }
 
         public NAudioRecorder nAudioMicrophone;//语音录制
         public NAudioRecordSoundcard nAudioSoundcard;//电脑音频录制
@@ -76,7 +79,7 @@ namespace TextToSpeech
             //BrowseButton2.Click += BoxClick;
             VoiceBoxList.SelectionChanged += BoxClick;
             PlayerBoxList.SelectionChanged += BoxClick;
-            PlayerBoxList.SelectionChanged += LocalListSelcet;
+            PlayerBoxList.SelectionChanged += LocalListSelect;
 
 
             开始录音1.Click += RecordMicrophoneVoiceClick;
@@ -92,12 +95,13 @@ namespace TextToSpeech
             Local_Right.Click += LocalRightClick;
             SaveButton.Click += SaveClick;
             Local_Number.TextChanged += Local_Number_TextChanged;
+
         }
 
 
         public void InitConfig()
         {
-            LogPath = "null";
+            LogFilePath = "null";
             VoicePath = null;
             VoicePath = "null";
             VoiceName = "null";
@@ -107,16 +111,17 @@ namespace TextToSpeech
                 try
                 {
                     string[] Setting = File.ReadAllLines((System.Windows.Forms.Application.StartupPath + 配置文件));
-                    LogPath = Setting[0];
+                    LogFilePath = Setting[0];
                     PlayerQQ = Setting[1];
                     PlayerName = Setting[2];
                     VoicePath = Setting[3];
                     VoiceName = Setting[4];
                     Number.Text = Setting[5];
                     Local_Number.Text = Setting[6];
-                    StreamReader streamReader = new StreamReader(LogPath, Encoding.UTF8);
+                    StreamReader streamReader = new StreamReader(LogFilePath, Encoding.UTF8);
                     TextAnalysis(streamReader.ReadToEnd());
                     InitBoxItem();
+                    LogFileName = LogFilePath.Substring(LogFilePath.LastIndexOf('\\') + 1).Replace(".txt","");
                 }
                 catch { }
             }
@@ -124,7 +129,7 @@ namespace TextToSpeech
         }
         public void SaveConfig()
         {
-            string Conetents = $"{LogPath}\n{PlayerQQ}\n{PlayerName}\n{VoicePath}\n{VoiceName}\n{Number.Text}\n{Local_Number.Text}";
+            string Conetents = $"{LogFilePath}\n{PlayerQQ}\n{PlayerName}\n{VoicePath}\n{VoiceName}\n{Number.Text}\n{Local_Number.Text}";
             File.WriteAllText(System.Windows.Forms.Application.StartupPath + 配置文件, Conetents, Encoding.UTF8);
         }
         public async void SaveClick(object sender, RoutedEventArgs e)
@@ -145,7 +150,7 @@ namespace TextToSpeech
                 return;
             }
 
-            var match = Regex.Match(Local_Number.Text, "[0-9]+");
+            var match = Regex.Match(Local_Number.Text, "[0-9]+");//检测下标是否为数字
             if (match.Value.Equals(Local_Number.Text))
             {
                 if ((Convert.ToInt32(Local_Number.Text) < 0))
@@ -169,7 +174,7 @@ namespace TextToSpeech
             if ((Convert.ToInt32(Local_Number.Text) - 1) >= 0)
             {
                 Local_Number.Text = (Convert.ToInt32(Local_Number.Text) - 1).ToString();
-                处理显示Text(CurrentRoleDataList, 局部显示文本, Local_Number, Local_ID);
+                //处理显示Text(CurrentRoleDataList, 局部显示文本, Local_Number, Local_ID);
             }
         }
         private void LocalRightClick(object sender, RoutedEventArgs e)
@@ -177,7 +182,7 @@ namespace TextToSpeech
             if ((Convert.ToInt32(Local_Number.Text) + 1) < CurrentRoleDataList.Count)
             {
                 Local_Number.Text = (Convert.ToInt32(Local_Number.Text) + 1).ToString();
-                处理显示Text(CurrentRoleDataList, 局部显示文本, Local_Number, Local_ID);
+                //处理显示Text(CurrentRoleDataList, 局部显示文本, Local_Number, Local_ID);
             }
         }
 
@@ -213,7 +218,7 @@ namespace TextToSpeech
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void LocalListSelcet(object sender, RoutedEventArgs e)
+        private void LocalListSelect(object sender, RoutedEventArgs e)
         {
             if(PlayerQQ==AllRole)
             {
@@ -232,34 +237,19 @@ namespace TextToSpeech
 
         private void 处理显示Text(List<TextData> datas, TextBox Log, TextBox Number, TextBox id)
         {
-            //if(datas.Count==0)
-            //{
-            //    return;
-            //}
 
             if (datas.Count > Convert.ToInt32(Number.Text))
             {
-                Log.Text = datas[Convert.ToInt32(Number.Text)].Log;
+                Local_Ptr = Convert.ToInt32(Number.Text);
+                Log.Text = datas[Local_Ptr].Log;
             }
             else
             {
+                Local_Ptr = datas.Count - 1;
                 Number.Text = (datas.Count - 1).ToString();
                 Log.Text = datas[datas.Count - 1].Log;
             }
             id.Text = datas[Convert.ToInt32(Number.Text)].ID;
-
-            /*
-            if (textDataList.Count > Convert.ToInt32(Number.Text))
-            {
-                显示文本.Text = textDataList[Convert.ToInt32(Number.Text)].Log;
-            }
-            else
-            {
-                Number.Text =  (textDataList.Count).ToString();
-                显示文本.Text = textDataList[textDataList.Count].Log;
-            }
-            ID.Text = textDataList[textDataList.Count].ID;
-            */
 
         }
         //private void 处理局部显示Text()
@@ -343,7 +333,7 @@ namespace TextToSpeech
                 if($"{PlayerName}({PlayerQQ})"== item.Content.ToString())
                 {
                     PlayerBoxList.SelectedItem = item;
-                    LocalListSelcet(null, null);
+                    LocalListSelect(null, null);
                     break;
                 }
             }
@@ -402,7 +392,7 @@ namespace TextToSpeech
             {
                 StreamReader streamReader = new StreamReader(openFileDialog.OpenFile(), Encoding.UTF8);
                 string tempData = streamReader.ReadToEnd();
-                LogPath = TextBox.Text = openFileDialog.FileName;//取得名称并输入到界面上。
+                LogFilePath = TextBox.Text = openFileDialog.FileName;//取得名称并输入到界面上。
 
                 #endregion
             TextAnalysis(tempData);
@@ -543,7 +533,7 @@ namespace TextToSpeech
 
         private bool RecordStatusCheck()
         {
-            if(Directory.Exists(VoicePath)&& File.Exists(LogPath))
+            if(Directory.Exists(VoicePath)&& File.Exists(LogFilePath))
             {
                 return true;
             }
