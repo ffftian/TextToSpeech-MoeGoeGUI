@@ -13,9 +13,9 @@ public class TextData
 {
     public string ID;
     public string QQ;
-    public string RoleName;
-    public string Log;
-    public string Time;
+    public string roleName;
+    public string log;
+    public string time;
     /// <summary>
     /// 提取通过txt文本读取的正则中的格式
     /// </summary>
@@ -25,27 +25,28 @@ public class TextData
     {
         try
         {
-            Time = Regex.Match(SingleText, "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2} ").Value;//提取时间
-            Match QQAndName = Regex.Match(SingleText, "[\u4E00-\u9FA5A-Za-z0-9_⑨]+\\([0-9]+\\)");
+            time = Regex.Match(SingleText, "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2} ").Value;//提取时间
+            Match QQAndName = Regex.Match(SingleText, "(?<=(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2} )).+\\([0-9]+\\)");//用0宽断言提取名称
+            //Match QQAndName = Regex.Match(SingleText, "[\u4E00-\u9FA5A-Za-z0-9_⑨]+\\([0-9]+\\)");
             if (QQAndName.Length == 0)
             {
                 QQAndName = Regex.Match(SingleText, "\\([0-9]+\\)");//当没有用户名时，只提取QQ号
             }
-            RoleName = QQAndName.Value.Split('(')[0];//提取用户名 
+            roleName = QQAndName.Value.Split('(')[0];//提取用户名 
 
             QQ = QQAndName.Value?.Split('(')[1].Split(')')[0];//提取QQ号
 
             string[] SingleConversation = Regex.Split(SingleText, "\\r\\n", RegexOptions.IgnoreCase);//QQ消息分开
-            for (int a = 0; a < SingleConversation.Length; a++)
+            for (int i = 0; i < SingleConversation.Length; i++)
             {
-                if (a == 0)
+                switch (i)
                 {
-                    ID = SingleConversation[a];//第一行为QQ消息ID
-                }
-
-                if (a != 0)
-                {
-                    Log += SingleConversation[a] + "\n";//剩下的为log
+                    case 0:
+                        ID = SingleConversation[i];//第一行为QQ消息ID
+                        break;
+                    default:
+                        log += SingleConversation[i] + "\n";//剩下的为log
+                        break;
                 }
             }
         }

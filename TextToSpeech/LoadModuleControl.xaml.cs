@@ -241,13 +241,13 @@ namespace TextToSpeech
             if (datas.Count > Convert.ToInt32(Number.Text))
             {
                 Local_Ptr = Convert.ToInt32(Number.Text);
-                Log.Text = datas[Local_Ptr].Log;
+                Log.Text = datas[Local_Ptr].log;
             }
             else
             {
                 Local_Ptr = datas.Count - 1;
                 Number.Text = (datas.Count - 1).ToString();
-                Log.Text = datas[datas.Count - 1].Log;
+                Log.Text = datas[datas.Count - 1].log;
             }
             id.Text = datas[Convert.ToInt32(Number.Text)].ID;
 
@@ -256,12 +256,12 @@ namespace TextToSpeech
         //{
         //    if (CurrentDataList.Count > Convert.ToInt32(Local_Number.Text))
         //    {
-        //        局部显示文本.Text = CurrentDataList[Convert.ToInt32(Local_Number.Text)].Log;
+        //        局部显示文本.Text = CurrentDataList[Convert.ToInt32(Local_Number.Text)].log;
         //    }
         //    else
         //    {
         //        Number.Text = (CurrentDataList.Count).ToString();
-        //        局部显示文本.Text = CurrentDataList[CurrentDataList.Count].Log;
+        //        局部显示文本.Text = CurrentDataList[CurrentDataList.Count].log;
         //    }
         //    Local_ID.Text = CurrentDataList[CurrentDataList.Count].ID;
         //}
@@ -302,7 +302,7 @@ namespace TextToSpeech
                       if(PlayerBoxList.SelectedIndex< FirstQQNameArray.Length)
                     {
                         PlayerQQ = FirstQQNameArray[PlayerBoxList.SelectedIndex].QQ;
-                        PlayerName = FirstQQNameArray[PlayerBoxList.SelectedIndex].RoleName;
+                        PlayerName = FirstQQNameArray[PlayerBoxList.SelectedIndex].roleName;
                     }
                        else
                     {
@@ -353,7 +353,7 @@ namespace TextToSpeech
             foreach (var QQData in FirstQQNameArray)
             {
                 ComboBoxItem box = new ComboBoxItem();
-                box.Content = $"{QQData.RoleName}({ QQData.QQ})";
+                box.Content = $"{QQData.roleName}({ QQData.QQ})";
                 PlayerBoxList.Items.Add(box);
             }
             ComboBoxItem box2 = new ComboBoxItem();
@@ -465,7 +465,7 @@ namespace TextToSpeech
         {
             get
             {
-                return CurrentRoleDataList[int.Parse(Local_Number.Text)].Log.Replace("@", "at");
+                return CurrentRoleDataList[int.Parse(Local_Number.Text)].log.Replace("@", "at");
             }
         }
 
@@ -478,7 +478,7 @@ namespace TextToSpeech
 
             // var newID = Regex.Replace(item.ID, RegexTool.匹配路径非法字符, "");//路径不支持的格式要自动和谐掉
 
-            //  narratorcobj.SaveToWave(VoicePath, newID, item.Log);
+            //  narratorcobj.SaveToWave(VoicePath, newID, item.log);
         }
 
         /// <summary>
@@ -500,7 +500,7 @@ namespace TextToSpeech
             foreach (var item in SelectedLE)
             {
                 var newID = Regex.Replace(item.ID, MiaoRegexTool.路径非法字符, "");//路径不支持的格式名称要自动和谐掉
-                var newLog = item.Log.Replace("@", "at");//@处理成at
+                var newLog = item.log.Replace("@", "at");//@处理成at
                 narratorcobj.SaveToWave(VoicePath, newID, newLog);
             }
         }

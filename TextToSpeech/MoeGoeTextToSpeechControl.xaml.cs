@@ -58,6 +58,7 @@ namespace TextToSpeech
                 CountInput.Text = value.ToString();
             }
         }
+        private int CurrentCreateCount;
 
         /// <summary>
         /// 朗读者朗读数据
@@ -220,7 +221,7 @@ namespace TextToSpeech
                 SpeakerTextData = new string[LoadModuleControl.CurrentRoleDataList.Count];
                 for (int i = 0; i < SpeakerTextData.Length; i++)
                 {
-                    SpeakerTextData[i] = LoadModuleControl.CurrentRoleDataList[i].Log;
+                    SpeakerTextData[i] = LoadModuleControl.CurrentRoleDataList[i].log;
                 }
             }
             else
@@ -315,6 +316,8 @@ namespace TextToSpeech
             string value = e.Data;
            
         }
+        public event Action OnGenerateComplete;
+
         private void Cmd_ErrorHandler(CommandLine sender, DataReceivedEventArgs e)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -324,6 +327,7 @@ namespace TextToSpeech
                 if ("Speaker ID: Path to save: Successfully saved!" == e.Data)
                 {
                     GenerateComplete = true;
+                    OnGenerateComplete?.Invoke();
                 }
             }
             );
@@ -360,6 +364,7 @@ namespace TextToSpeech
             SerializableCasheData(SpeakerTextPath);
         }
 
+        #region 生成语音部分
         private void 生成指定语音_Click(object sender, RoutedEventArgs e)
         {
             if (CreateCount == 1)
@@ -376,6 +381,31 @@ namespace TextToSpeech
 
         public void CreateMultipleMoeGoeTTS(string saveFolder, int Count)
         {
+            if (!Directory.Exists(saveFolder))
+            {
+                Directory.CreateDirectory(saveFolder);
+            }
+            CurrentCreateCount = 0;
+            MoeGoeTextToSpeechControl_OnGenerateComplete();
+            OnGenerateComplete = MoeGoeTextToSpeechControl_OnGenerateComplete;
+        }
+
+        private void MoeGoeTextToSpeechControl_OnGenerateComplete()
+        {
+            string savePath = System.IO.Path.Combine(LoadModuleControl.VoicePath, LoadModuleControl.GetRoleDialogueID, $"{LoadModuleControl.GetRoleDialogueID}{CurrentCreateCount}.wav");
+            CreateMoeGoeTTS(savePath);
+            CurrentCreateCount++;
+            if (CurrentCreateCount == CreateCount)
+            {
+                生成指定语音.Content = "生成指定语音";
+                OnGenerateComplete -= MoeGoeTextToSpeechControl_OnGenerateComplete;
+                生成指定语音.IsEnabled = true;
+            }
+            else
+            {
+                生成指定语音.Content = $"{CurrentCreateCount}/{CreateCount}";
+                生成指定语音.IsEnabled = false;
+            }
 
         }
 
@@ -416,7 +446,7 @@ namespace TextToSpeech
             cmd.Write(speakerBox.SelectedIndex.ToString());//说话人
         }
 
-
+        #endregion
 
 
         private void OpenMoeGoe_Click(object sender, RoutedEventArgs e)
