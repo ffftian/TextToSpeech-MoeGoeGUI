@@ -96,6 +96,8 @@ namespace TextToSpeech
             SaveButton.Click += SaveClick;
             Local_Number.TextChanged += Local_Number_TextChanged;
 
+            
+
         }
 
 

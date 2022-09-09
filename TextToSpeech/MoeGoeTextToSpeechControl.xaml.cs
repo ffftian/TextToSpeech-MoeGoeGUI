@@ -39,11 +39,21 @@ namespace TextToSpeech
 
         public int Pattern { get { return PatternBox.SelectedIndex; } set { PatternBox.SelectedIndex = value; } }
 
+
+        private double Deviation
+        {
+            get
+            {
+                return DeviationSlider.Value * random.NextDouble();
+            }
+
+        }
+
         private string RateLength
         {
             get
             {
-                return $"[LENGTH={RateSlider.Value}]";
+                return $"[LENGTH={RateSlider.Value+ Deviation}]";//
             }
         }
         private int CreateCount
@@ -85,11 +95,12 @@ namespace TextToSpeech
                 generateLock = value;
             }
         }
-
+        private Random random;
 
 
         public MoeGoeTextToSpeechControl()
         {
+            random = new Random();
 
             InitializeComponent();
             LoadConfig();
@@ -106,10 +117,16 @@ namespace TextToSpeech
             启用语音生成控制台.Click += 启用语音生成控制台_Click;
             RateSlider.ValueChanged += RateSlider_ValueChanged;
             CountSlider.ValueChanged += NumberSlider_ValueChanged;
+            DeviationSlider.ValueChanged += DeviationSlider_ValueChanged;
             //RateIuput.TextChanged += RateIuput_TextChanged;
 
             SpeakerText.TextChanged += SpeakerText_TextChanged;
-            
+
+        }
+
+        private void DeviationSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            DeviationInput.Text = e.NewValue.ToString();
         }
 
         private void NumberSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -347,6 +364,8 @@ namespace TextToSpeech
                     RateSlider.Value = double.Parse(Setting[4]);
                     RateInput.Text = Setting[4];
                     CreateCount = int.Parse(Setting[5]);
+                    DeviationInput.Text = Setting[6];
+                    DeviationSlider.Value = double.Parse(Setting[6]);
                 }
             }
             catch { }
@@ -354,7 +373,7 @@ namespace TextToSpeech
         }
         public void SaveConfig()
         {
-            string Conetents = $"{MoeGoePath}\n{ModelPath}\n{ConfigPath}\n{Pattern}\n{RateSlider.Value}\n{CreateCount}";
+            string Conetents = $"{MoeGoePath}\n{ModelPath}\n{ConfigPath}\n{Pattern}\n{RateSlider.Value}\n{CreateCount}\n{DeviationSlider.Value}";
             File.WriteAllText(System.Windows.Forms.Application.StartupPath + MoeGoe配置文件, Conetents, Encoding.UTF8);
         }
 
