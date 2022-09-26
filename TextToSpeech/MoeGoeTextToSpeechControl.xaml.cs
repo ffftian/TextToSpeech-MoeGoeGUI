@@ -350,7 +350,7 @@ namespace TextToSpeech
             OpenConfig.IsEnabled = false;
 
             生成指定语音.IsEnabled = true;
-            生成所有语音.IsEnabled = true;
+            //生成所有语音.IsEnabled = true;
             AnalyzeRole();
         }
 

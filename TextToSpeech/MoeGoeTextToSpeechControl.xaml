@@ -17,7 +17,7 @@
         <Button Name="OpenConfig" Content="配置目录" HorizontalAlignment="Left" Margin="10,82,0,0" VerticalAlignment="Top"/>
         <TextBox Name="ConfigPathBox" HorizontalAlignment="Left" FontSize="14" Margin="67,82,0,0"  TextWrapping="NoWrap" VerticalAlignment="Top" Width="523"/>
 
-        <Button x:Name="生成所有语音" Content="生成所有语音" HorizontalAlignment="Left" Margin="467,329,0,0" VerticalAlignment="Top" Width="117" Height="28" IsEnabled="False" />
+        <Button x:Name="生成所有语音" Content="生成所有语音" HorizontalAlignment="Left" Margin="4,357,0,0" VerticalAlignment="Top" Width="117" Height="28" IsEnabled="False" />
         <Button x:Name="生成指定语音" Content="生成指定语音" HorizontalAlignment="Left" Margin="474,142,0,0" VerticalAlignment="Top" Width="117" Height="28" />
         <Slider Name="CountSlider" HorizontalAlignment="Left" Margin="474,175,0,0" VerticalAlignment="Top" Width="120" Value="1" Minimum="1" Maximum="20" SmallChange="0"/>
         <Label Content="生成次数" FontSize="14" HorizontalAlignment="Left" Margin="377,170,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.485,0.214"/>
@@ -42,11 +42,11 @@
         <Label Content="时长" FontSize="14" HorizontalAlignment="Left" Margin="83,168,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.485,0.214"/>
         <TextBox Name ="RateInput" Text="1" FontSize="20" HorizontalAlignment="Left" Margin="121,168,0,0" VerticalAlignment="Top" Width="110"  HorizontalContentAlignment="Center" Height="29" IsEnabled="False" />
         <Slider Name="RateSlider" HorizontalAlignment="Left" Margin="236,176,0,0" VerticalAlignment="Top" Width="120" Maximum="3" LargeChange="0.05" Value="1" SmallChange="1"/>
-        <Label Content="由于神经网络每次生成音频音调都是完全不同的情况，一键生成所有文本状态很差(未开发)" HorizontalAlignment="Left" Margin="0,330,0,0" VerticalAlignment="Top" FontSize="10"/>
+        <Label Content="由于神经网络每次生成音频音调都是完全不同的情况，固未提供一键生成，而鼓励手动挑选" HorizontalAlignment="Left" Margin="0,330,0,0" VerticalAlignment="Top" FontSize="10"/>
         <Label Content="浮动" FontSize="14" HorizontalAlignment="Left" Margin="82,204,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.485,0.214"/>
         <TextBox x:Name ="DeviationInput" Text="1" FontSize="20" HorizontalAlignment="Left" Margin="122,200,0,0" VerticalAlignment="Top" Width="109"  HorizontalContentAlignment="Center" Height="30" IsEnabled="False" />
         <Slider x:Name="DeviationSlider" HorizontalAlignment="Left" Margin="236,206,0,0" VerticalAlignment="Top" Width="120" Maximum="1" LargeChange="0.05" SmallChange="0.01"/>
-        <Button x:Name="批量修改命名音频" Content="批量修改命名音频" HorizontalAlignment="Left" Margin="467,362,0,0" VerticalAlignment="Top" Width="117" Height="28" />
+        <Button x:Name="批量修改命名音频" Content="批量修改命名音频" HorizontalAlignment="Left" Margin="473,331,0,0" VerticalAlignment="Top" Width="117" Height="28" />
 
 
     </Grid>
