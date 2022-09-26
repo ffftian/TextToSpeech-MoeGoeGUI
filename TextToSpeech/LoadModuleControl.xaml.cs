@@ -377,7 +377,7 @@ namespace TextToSpeech
             }
         }
         /// <summary>
-        /// 选中外部文档文件
+        /// 选中外部文档文件,切换文本
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -398,6 +398,7 @@ namespace TextToSpeech
 
                 #endregion
             TextAnalysis(tempData);
+            Local_Number.Text = "0";
             }
             openFileDialog.Dispose();
 
@@ -418,6 +419,7 @@ namespace TextToSpeech
 
                 开始录音1.IsEnabled = true;
                 开始录音2.IsEnabled = true;
+
 
             }
             data.Dispose();

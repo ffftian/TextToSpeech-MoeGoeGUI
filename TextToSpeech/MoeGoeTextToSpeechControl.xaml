@@ -32,19 +32,21 @@
         <TextBox x:Name="SpeakerText" HorizontalAlignment="Left" Height="91" Margin="348,234,0,0" TextWrapping="Wrap" Text="文字" VerticalAlignment="Top" Width="252" />
         <Label Content="朗读调整" HorizontalAlignment="Left" Margin="348,211,0,0" VerticalAlignment="Top"/>
         <Label Content="模式选择" FontSize="14" HorizontalAlignment="Left" Margin="12,168,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.485,0.214"/>
-        <ComboBox Name="PatternBox" HorizontalAlignment="Left" Margin="83,171,0,0" VerticalAlignment="Top" Width="78">
+        <ComboBox Name="PatternBox" HorizontalAlignment="Left" Margin="4,192,0,0" VerticalAlignment="Top" Width="78">
             <ComboBoxItem>中文</ComboBoxItem>
             <ComboBoxItem>日文</ComboBoxItem>
+            <ComboBoxItem>混合</ComboBoxItem>
             <ComboBoxItem>手动</ComboBoxItem>
         </ComboBox>
 
-        <Label Content="时长" FontSize="14" HorizontalAlignment="Left" Margin="162,172,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.485,0.214"/>
-        <TextBox Name ="RateInput" Text="1" FontSize="20" HorizontalAlignment="Left" Margin="200,171,0,0" VerticalAlignment="Top" Width="31"  HorizontalContentAlignment="Center" Height="29" IsEnabled="False" />
-        <Slider Name="RateSlider" HorizontalAlignment="Left" Margin="236,176,0,0" VerticalAlignment="Top" Width="120" Maximum="5" LargeChange="0.5" Value="1"/>
+        <Label Content="时长" FontSize="14" HorizontalAlignment="Left" Margin="83,168,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.485,0.214"/>
+        <TextBox Name ="RateInput" Text="1" FontSize="20" HorizontalAlignment="Left" Margin="121,168,0,0" VerticalAlignment="Top" Width="110"  HorizontalContentAlignment="Center" Height="29" IsEnabled="False" />
+        <Slider Name="RateSlider" HorizontalAlignment="Left" Margin="236,176,0,0" VerticalAlignment="Top" Width="120" Maximum="3" LargeChange="0.05" Value="1" SmallChange="1"/>
         <Label Content="由于神经网络每次生成音频音调都是完全不同的情况，一键生成所有文本状态很差(未开发)" HorizontalAlignment="Left" Margin="0,330,0,0" VerticalAlignment="Top" FontSize="10"/>
         <Label Content="浮动" FontSize="14" HorizontalAlignment="Left" Margin="82,204,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.485,0.214"/>
         <TextBox x:Name ="DeviationInput" Text="1" FontSize="20" HorizontalAlignment="Left" Margin="122,200,0,0" VerticalAlignment="Top" Width="109"  HorizontalContentAlignment="Center" Height="30" IsEnabled="False" />
-        <Slider x:Name="DeviationSlider" HorizontalAlignment="Left" Margin="236,206,0,0" VerticalAlignment="Top" Width="120" Maximum="1" LargeChange="0.1" SmallChange="0.01"/>
+        <Slider x:Name="DeviationSlider" HorizontalAlignment="Left" Margin="236,206,0,0" VerticalAlignment="Top" Width="120" Maximum="1" LargeChange="0.05" SmallChange="0.01"/>
+        <Button x:Name="批量修改命名音频" Content="批量修改命名音频" HorizontalAlignment="Left" Margin="467,362,0,0" VerticalAlignment="Top" Width="117" Height="28" />
 
 
     </Grid>

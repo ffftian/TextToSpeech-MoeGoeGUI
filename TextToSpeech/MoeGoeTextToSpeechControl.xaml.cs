@@ -53,7 +53,7 @@ namespace TextToSpeech
         {
             get
             {
-                return $"[LENGTH={RateSlider.Value+ Deviation}]";//
+                return $"[LENGTH={RateSlider.Value + Deviation}]";//
             }
         }
         private int CreateCount
@@ -71,7 +71,7 @@ namespace TextToSpeech
         private int CurrentCreateCount;
 
         /// <summary>
-        /// 朗读者朗读数据
+        /// VITS，实际朗读者朗读数据
         /// </summary>
         public string[] SpeakerTextData;
         //public int Rate { get { return RateIuput} }
@@ -85,7 +85,7 @@ namespace TextToSpeech
         {
             get
             {
-                
+
                 return generateLock;
             }
             set
@@ -122,6 +122,43 @@ namespace TextToSpeech
 
             SpeakerText.TextChanged += SpeakerText_TextChanged;
 
+            批量修改命名音频.Click += 批量修改命名音频_Click;
+
+        }
+
+        private void 批量修改命名音频_Click(object sender, RoutedEventArgs e)
+        {
+            if(Directory.Exists(LoadModuleControl.VoicePath))
+            {
+                string[] files =  Directory.GetFiles(LoadModuleControl.VoicePath);
+
+                for(int i=0;i< files.Length;i++)
+                {
+                    FileInfo fileInfo = new FileInfo(files[i]);
+                    int index =  files[i].LastIndexOf(')');
+                    string path = files[i].Substring(0, index+1);
+
+                    try
+                    {
+                        fileInfo.MoveTo($"{path}.wav");
+                    }
+                    catch(Exception ee)
+                    {
+                        MessageBox.Show(ee.Message, "失败", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+                   
+                }
+                MessageBox.Show("命名整合完成");
+            }
+            else
+            {
+                MessageBox.Show("命名失败","失败",MessageBoxButton.OK,MessageBoxImage.Error);
+            }
+
+
+           
+
         }
 
         private void DeviationSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -137,8 +174,9 @@ namespace TextToSpeech
         private void RateSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             //RateInput.Text = e.NewValue;
-            RateInput.Text = String.Format("{0:F}", e.NewValue);
-            
+            RateInput.Text = e.NewValue.ToString();
+            //RateInput.Text = String.Format("{0:F}", e.NewValue);
+
         }
 
         public void InitializeBindWindow()
@@ -147,8 +185,12 @@ namespace TextToSpeech
             LoadModuleControl.PlayerBoxList.SelectionChanged += PlayerBoxList_SelectionChanged;
             LoadModuleControl.Local_Number.TextChanged += Local_Number_TextChanged;
             //Item绑定时不会触发Button的呼叫
-            DeserializeCasheData(SpeakerTextPath);
-            Local_Number_TextChanged(null, null);
+            if (LoadModuleControl.CurrentRoleDataList != null)
+            {
+                DeserializeCasheData(SpeakerTextPath);
+                Local_Number_TextChanged(null, null);
+            }
+
 
         }
         /// <summary>
@@ -169,7 +211,7 @@ namespace TextToSpeech
         private void SpeakerText_TextChanged(object sender, TextChangedEventArgs e)
         {
             ///文本内容更改赋值给保存数组
-           SpeakerTextData[LoadModuleControl.Local_Ptr] = SpeakerText.Text;
+            SpeakerTextData[LoadModuleControl.Local_Ptr] = SpeakerText.Text;
         }
 
         string SpeakerTextPath
@@ -192,8 +234,16 @@ namespace TextToSpeech
         /// <param name="e"></param>
         private void PlayerBoxList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var lastName = (e.RemovedItems[0] as ComboBoxItem).Content.ToString();//上一项
-            var currentName = (e.AddedItems[0] as ComboBoxItem).Content.ToString();//这一项
+            if (((ComboBox)sender).Items.Count == 0) return;
+            
+
+            int index = e.RemovedItems.Count;
+            string lastName = null;
+            if (index != 0)
+            {
+                lastName = (e.RemovedItems[0] as ComboBoxItem).Content.ToString();//上一项
+            }
+            string currentName = (e.AddedItems[0] as ComboBoxItem).Content.ToString();//这一项
 
             if (!string.IsNullOrEmpty(lastName))
             {
@@ -226,7 +276,7 @@ namespace TextToSpeech
             FileStream stream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
             formatter.Serialize(stream, SpeakerTextData);
             stream.Close();
-          
+
         }
         /// <summary>
         /// 读取保存的序列化文本
@@ -247,6 +297,20 @@ namespace TextToSpeech
                 FileStream stream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Read);
                 SpeakerTextData = (string[])formatter.Deserialize(stream);
                 stream.Close();
+
+            
+                if(SpeakerTextData.Length < LoadModuleControl.CurrentRoleDataList.Count)
+                {
+                    string []copyArray = new string[LoadModuleControl.CurrentRoleDataList.Count];
+                    SpeakerTextData.CopyTo(copyArray, 0);
+
+                    for(int i= SpeakerTextData.Length; i< LoadModuleControl.CurrentRoleDataList.Count;i++)
+                    {
+                        copyArray[i] = LoadModuleControl.CurrentRoleDataList[i].log;
+                    }
+                    SpeakerTextData = copyArray;
+                }
+
             }
         }
 
@@ -331,7 +395,7 @@ namespace TextToSpeech
         private void Cmd_OutputHandler(CommandLine sender, DataReceivedEventArgs e)
         {
             string value = e.Data;
-           
+
         }
         public event Action OnGenerateComplete;
 
@@ -386,6 +450,12 @@ namespace TextToSpeech
         #region 生成语音部分
         private void 生成指定语音_Click(object sender, RoutedEventArgs e)
         {
+            if (speakerBox.SelectedIndex == -1)
+            {
+                MessageBox.Show("还没有选择朗读者");
+                return;
+            }
+
             if (CreateCount == 1)
             {
                 string savePath = System.IO.Path.Combine(LoadModuleControl.VoicePath, LoadModuleControl.GetRoleDialogueID + ".wav");
@@ -430,7 +500,7 @@ namespace TextToSpeech
 
         public void CreateMoeGoeTTS(string savePath)
         {
-          
+
             GenerateComplete = false;
             switch (Pattern)
             {
@@ -443,6 +513,9 @@ namespace TextToSpeech
                     //TTS("[JA]" + LoadModuleControl.GetRoleDialogue + "[JA]");
                     break;
                 case 2:
+                    TTS($"{RateLength} {AnalysisLanguageText(SpeakerText.Text)}");
+                    break;
+                case 3:
                     TTS($"{RateLength}{SpeakerText.Text}");
                     //TTS(LoadModuleControl.GetRoleDialogue);
                     break;
@@ -451,9 +524,53 @@ namespace TextToSpeech
             cmd.Write("y");//要有输出完成回调
             //SpeakerText.Text
         }
+
+        private string AnalysisLanguageText(string text)
+        {
+            string[] textFragment = text.Split(new string[] { "[", "]" }, StringSplitOptions.None);
+
+            StringBuilder stringBuilderSplicing = new StringBuilder();
+
+
+            for (int i = 0; i < textFragment.Length; i++)
+            {
+                if (i % 2 == 0)
+                {
+                    if (!string.IsNullOrEmpty(textFragment[i]))
+                    {
+                        stringBuilderSplicing.AppendLine("[ZH]");
+                        stringBuilderSplicing.Append(textFragment[i]);
+                        stringBuilderSplicing.AppendLine("[ZH]");
+                    }
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(textFragment[i]))
+                    {
+                        stringBuilderSplicing.AppendLine("[JA]");
+                        stringBuilderSplicing.Append(textFragment[i]);
+                        stringBuilderSplicing.AppendLine("[JA]");
+                    }
+                }
+            }
+            return stringBuilderSplicing.ToString();
+            //Regex regex = new Regex(".?(?=[\\[\\]])|(.+)");
+
+
+            //MatchCollection matchCollection =  regex.Matches(text);
+
+            //foreach (Match mat in matchCollection)
+            //{
+            //    var g =  mat.Value;
+            //}
+            //regex.Matches
+
+
+        }
+
         private void 生成所有语音_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("生成所有语音需要较长时间，请不要关闭窗口，生成完成时将有弹窗提示","提示",MessageBoxButton.OK,MessageBoxImage.Information);
+            MessageBox.Show("生成所有语音需要较长时间，请不要关闭窗口，生成完成时将有弹窗提示", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
 
         }
 
