@@ -153,6 +153,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CommandLine.cs" />
+    <Compile Include="ExternalTTSControl.xaml.cs">
+      <DependentUpon>ExternalTTSControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="LineWaveFormControl.xaml.cs">
       <DependentUpon>LineWaveFormControl.xaml</DependentUpon>
     </Compile>
@@ -172,6 +175,10 @@
     <Compile Include="TTS\Narratorcs.cs" />
     <Compile Include="WaveInterface\IVisualizationPlugin.cs" />
     <Compile Include="WaveInterface\IWaveFormRenderer.cs" />
+    <Page Include="ExternalTTSControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="LineWaveFormControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
