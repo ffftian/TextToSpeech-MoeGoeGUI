@@ -219,7 +219,7 @@ namespace TextToSpeech
         {
             get
             {
-                return $"{System.Environment.CurrentDirectory}\\Cashe\\{LoadModuleControl.LogFileName}-{LoadModuleControl.PlayerName}({LoadModuleControl.PlayerQQ}).txt";
+                return $"{System.Environment.CurrentDirectory}\\Cashe\\{LoadModuleControl.LogFileName}-{LoadModuleControl.currentName}({LoadModuleControl.currentGroup}).txt";
             }
         }
 

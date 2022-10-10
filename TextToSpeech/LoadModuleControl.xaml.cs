@@ -20,15 +20,18 @@ namespace TextToSpeech
     {
         public MainWindow MainWindow { get; set; }
 
-        public List<TextData> textDataList;//存储所有文字的数据
-        public List<TextData> CurrentRoleDataList;//存储当前角色文字的数据
+        //public List<QQTextData> textDataList;//存储所有文字的数据
+        //public List<QQTextData> CurrentRoleDataList;//存储当前角色文字的数据
+
+        public List<BaseTextData> textDataList;//存储所有文字的数据
+        public List<BaseTextData> CurrentRoleDataList;//存储当前角色文字的数据
 
         public Narrator narratorcobj = new Narrator();
 
         public List<VoiceInfo> voices = new List<VoiceInfo>();
 
 
-        public TextData[] FirstQQNameArray;//存储所有的出场人
+        public QQTextData[] FirstQQNameArray;//存储所有的出场人
         //输出格式直接按照ID输出，是谁就读对应的ID。
 
 
@@ -36,8 +39,8 @@ namespace TextToSpeech
         public string LogFilePath { get { return TextBox.Text; }set { TextBox.Text = value; } }//日志保存地址
         public string LogFileName;
 
-        public string PlayerQQ ;//玩家QQ号
-        public string PlayerName;//玩家名字
+        public string currentGroup;//玩家QQ号
+        public string currentName;//玩家名字
 
         public string VoicePath { get { return VoicePathBox.Text; } set { VoicePathBox.Text = value; } }//语音保存地址
         public string VoiceName;//语音名字
@@ -114,8 +117,8 @@ namespace TextToSpeech
                 {
                     string[] Setting = File.ReadAllLines((System.Windows.Forms.Application.StartupPath + 配置文件));
                     LogFilePath = Setting[0];
-                    PlayerQQ = Setting[1];
-                    PlayerName = Setting[2];
+                    currentGroup = Setting[1];
+                    currentName = Setting[2];
                     VoicePath = Setting[3];
                     VoiceName = Setting[4];
                     Number.Text = Setting[5];
@@ -131,7 +134,7 @@ namespace TextToSpeech
         }
         public void SaveConfig()
         {
-            string Conetents = $"{LogFilePath}\n{PlayerQQ}\n{PlayerName}\n{VoicePath}\n{VoiceName}\n{Number.Text}\n{Local_Number.Text}";
+            string Conetents = $"{LogFilePath}\n{currentGroup}\n{currentName}\n{VoicePath}\n{VoiceName}\n{Number.Text}\n{Local_Number.Text}";
             File.WriteAllText(System.Windows.Forms.Application.StartupPath + 配置文件, Conetents, Encoding.UTF8);
         }
         public async void SaveClick(object sender, RoutedEventArgs e)
@@ -222,13 +225,13 @@ namespace TextToSpeech
         /// <param name="e"></param>
         private void LocalListSelect(object sender, RoutedEventArgs e)
         {
-            if(PlayerQQ==AllRole)
+            if(currentGroup==AllRole)
             {
                 CurrentRoleDataList = textDataList;
             }
             else
             {
-                CurrentRoleDataList = (from text in textDataList where text.QQ == PlayerQQ select text).ToList();
+                CurrentRoleDataList = (from text in textDataList where text.PlayerID == currentGroup select text).ToList();
             }
             处理显示Text(CurrentRoleDataList, 局部显示文本, Local_Number, Local_ID);
             Local_Left.IsEnabled = true;
@@ -237,7 +240,7 @@ namespace TextToSpeech
         }
 
 
-        private void 处理显示Text(List<TextData> datas, TextBox Log, TextBox Number, TextBox id)
+        private void 处理显示Text(List<BaseTextData> datas, TextBox Log, TextBox Number, TextBox id)
         {
 
             if (datas.Count > Convert.ToInt32(Number.Text))
@@ -251,7 +254,7 @@ namespace TextToSpeech
                 Number.Text = (datas.Count - 1).ToString();
                 Log.Text = datas[datas.Count - 1].log;
             }
-            id.Text = datas[Convert.ToInt32(Number.Text)].ID;
+            id.Text = datas[Convert.ToInt32(Number.Text)].SaveID;
 
         }
         //private void 处理局部显示Text()
@@ -265,7 +268,7 @@ namespace TextToSpeech
         //        Number.Text = (CurrentDataList.Count).ToString();
         //        局部显示文本.Text = CurrentDataList[CurrentDataList.Count].log;
         //    }
-        //    Local_ID.Text = CurrentDataList[CurrentDataList.Count].ID;
+        //    Local_ID.Text = CurrentDataList[CurrentDataList.Count].id;
         //}
 
 
@@ -295,21 +298,21 @@ namespace TextToSpeech
                     //PlayerBoxList.SelectedItem = PlayerBoxList.SelectedValue;
                     //if (PlayerBoxList.SelectedValue as string == AllRole)
                     //{
-                    //    PlayerQQ = AllRole;
-                    //    PlayerName = "0";
+                    //    currentGroup = AllRole;
+                    //    currentName = "0";
                     //}
                     //else
                     //{
                    
                       if(PlayerBoxList.SelectedIndex< FirstQQNameArray.Length)
                     {
-                        PlayerQQ = FirstQQNameArray[PlayerBoxList.SelectedIndex].QQ;
-                        PlayerName = FirstQQNameArray[PlayerBoxList.SelectedIndex].roleName;
+                        currentGroup = FirstQQNameArray[PlayerBoxList.SelectedIndex].qq;
+                        currentName = FirstQQNameArray[PlayerBoxList.SelectedIndex].roleName;
                     }
                        else
                     {
-                        PlayerQQ = AllRole;
-                        PlayerName = AllRole;
+                        currentGroup = AllRole;
+                        currentName = AllRole;
                     }
                     //} 
                 }
@@ -332,7 +335,7 @@ namespace TextToSpeech
         {
             foreach(ComboBoxItem item in PlayerBoxList.Items)
             {
-                if($"{PlayerName}({PlayerQQ})"== item.Content.ToString())
+                if($"{currentName}({currentGroup})"== item.Content.ToString())
                 {
                     PlayerBoxList.SelectedItem = item;
                     LocalListSelect(null, null);
@@ -350,12 +353,13 @@ namespace TextToSpeech
         void TextAnalysis(string Data)
         {
             PlayerBoxList.Items.Clear();//清空时会触发回调导致问题，所以需要先进行Items的清理，再去读取新的QQ资源。
-            textDataList = QQTool.QQLogSplit<TextData>(Data, ErorrShow);
-            FirstQQNameArray = textDataList.DistinctBy(a => a.QQ).ToArray();
+            textDataList = global::TextTool.LogSplit<BaseTextData>(Data, this.ErorrShow);
+            //textDataList = global::TextTool.QQLogSplit<BaseTextData>(Data, this.ErorrShow);
+            FirstQQNameArray = textDataList.DistinctBy(a => a.qq).ToArray();
             foreach (var QQData in FirstQQNameArray)
             {
                 ComboBoxItem box = new ComboBoxItem();
-                box.Content = $"{QQData.roleName}({ QQData.QQ})";
+                box.Content = $"{QQData.roleName}({ QQData.qq})";
                 PlayerBoxList.Items.Add(box);
             }
             ComboBoxItem box2 = new ComboBoxItem();
@@ -462,7 +466,7 @@ namespace TextToSpeech
         {
             get
             {
-                return Regex.Replace(CurrentRoleDataList[int.Parse(Local_Number.Text)].ID, MiaoRegexTool.路径非法字符, "");
+                return Regex.Replace(CurrentRoleDataList[int.Parse(Local_Number.Text)].SaveID, MiaoRegexTool.路径非法字符, "");
             }
         }
         public string GetRoleDialogue
@@ -480,7 +484,7 @@ namespace TextToSpeech
             string newLog = GetRoleDialogue;//@处理成at
             narratorcobj.SaveToWave(VoicePath, newID, newLog);
 
-            // var newID = Regex.Replace(item.ID, RegexTool.匹配路径非法字符, "");//路径不支持的格式要自动和谐掉
+            // var newID = Regex.Replace(item.id, RegexTool.匹配路径非法字符, "");//路径不支持的格式要自动和谐掉
 
             //  narratorcobj.SaveToWave(VoicePath, newID, item.log);
         }
@@ -491,19 +495,19 @@ namespace TextToSpeech
         public void VoiceProduction()
         {
             narratorcobj.SetRate(Convert.ToInt32(RateIuput.Text));
-            IEnumerable<TextData> SelectedLE;
-            if (PlayerQQ == AllRole)
+            IEnumerable<QQTextData> SelectedLE;
+            if (currentGroup == AllRole)
             {
                 SelectedLE = textDataList;
             }
             else
             {
-                SelectedLE = from r in textDataList where r.QQ == PlayerQQ select r;
+                SelectedLE = from r in textDataList where r.qq == currentGroup select r;
             }
             narratorcobj.SelectVoice(VoiceName);
             foreach (var item in SelectedLE)
             {
-                var newID = Regex.Replace(item.ID, MiaoRegexTool.路径非法字符, "");//路径不支持的格式名称要自动和谐掉
+                var newID = Regex.Replace(item.SaveID, MiaoRegexTool.路径非法字符, "");//路径不支持的格式名称要自动和谐掉
                 var newLog = item.log.Replace("@", "at");//@处理成at
                 narratorcobj.SaveToWave(VoicePath, newID, newLog);
             }
@@ -566,7 +570,7 @@ namespace TextToSpeech
             }
             else
             {
-                newID = Regex.Replace(CurrentRoleDataList[Convert.ToInt32(Local_Number.Text)].ID, MiaoRegexTool.路径非法字符, "");//路径不支持的格式要自动和谐掉
+                newID = Regex.Replace(CurrentRoleDataList[Convert.ToInt32(Local_Number.Text)].SaveID, MiaoRegexTool.路径非法字符, "");//路径不支持的格式要自动和谐掉
             }
             nAudioMicrophone.SetFilePath(VoicePath, newID);
             nAudioMicrophone.StartRec();
@@ -592,7 +596,7 @@ namespace TextToSpeech
             }
             else
             {
-                newID = Regex.Replace(CurrentRoleDataList[Convert.ToInt32(Local_Number.Text)].ID, MiaoRegexTool.路径非法字符, "");//路径不支持的格式要自动和谐掉
+                newID = Regex.Replace(CurrentRoleDataList[Convert.ToInt32(Local_Number.Text)].SaveID, MiaoRegexTool.路径非法字符, "");//路径不支持的格式要自动和谐掉
             }
             nAudioSoundcard.SetFilePath(VoicePath, newID);
             nAudioSoundcard.StartRec();
