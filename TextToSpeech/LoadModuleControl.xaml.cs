@@ -30,8 +30,8 @@ namespace TextToSpeech
 
         public List<VoiceInfo> voices = new List<VoiceInfo>();
 
-
-        public QQTextData[] FirstQQNameArray;//存储所有的出场人
+        public BaseTextData[] FirstQQNameArray;//存储所有的出场人
+        ///public QQTextData[] FirstQQNameArray;//存储所有的出场人
         //输出格式直接按照ID输出，是谁就读对应的ID。
 
 
@@ -231,7 +231,7 @@ namespace TextToSpeech
             }
             else
             {
-                CurrentRoleDataList = (from text in textDataList where text.PlayerID == currentGroup select text).ToList();
+                CurrentRoleDataList = (from text in textDataList where text.GroupID == currentGroup select text).ToList();
             }
             处理显示Text(CurrentRoleDataList, 局部显示文本, Local_Number, Local_ID);
             Local_Left.IsEnabled = true;
@@ -306,8 +306,8 @@ namespace TextToSpeech
                    
                       if(PlayerBoxList.SelectedIndex< FirstQQNameArray.Length)
                     {
-                        currentGroup = FirstQQNameArray[PlayerBoxList.SelectedIndex].qq;
-                        currentName = FirstQQNameArray[PlayerBoxList.SelectedIndex].roleName;
+                        currentGroup = FirstQQNameArray[PlayerBoxList.SelectedIndex].GroupID;
+                        currentName = FirstQQNameArray[PlayerBoxList.SelectedIndex].name;
                     }
                        else
                     {
@@ -353,13 +353,13 @@ namespace TextToSpeech
         void TextAnalysis(string Data)
         {
             PlayerBoxList.Items.Clear();//清空时会触发回调导致问题，所以需要先进行Items的清理，再去读取新的QQ资源。
-            textDataList = global::TextTool.LogSplit<BaseTextData>(Data, this.ErorrShow);
+            textDataList = TextTool.LogSplit(Data, this.ErorrShow);
             //textDataList = global::TextTool.QQLogSplit<BaseTextData>(Data, this.ErorrShow);
-            FirstQQNameArray = textDataList.DistinctBy(a => a.qq).ToArray();
+            FirstQQNameArray = textDataList.DistinctBy(a => a.GroupID).ToArray();
             foreach (var QQData in FirstQQNameArray)
             {
                 ComboBoxItem box = new ComboBoxItem();
-                box.Content = $"{QQData.roleName}({ QQData.qq})";
+                box.Content = $"{QQData.name}({ QQData.GroupID})";
                 PlayerBoxList.Items.Add(box);
             }
             ComboBoxItem box2 = new ComboBoxItem();
@@ -466,7 +466,7 @@ namespace TextToSpeech
         {
             get
             {
-                return Regex.Replace(CurrentRoleDataList[int.Parse(Local_Number.Text)].SaveID, MiaoRegexTool.路径非法字符, "");
+                return CurrentRoleDataList[int.Parse(Local_Number.Text)].SaveID;
             }
         }
         public string GetRoleDialogue
@@ -495,14 +495,14 @@ namespace TextToSpeech
         public void VoiceProduction()
         {
             narratorcobj.SetRate(Convert.ToInt32(RateIuput.Text));
-            IEnumerable<QQTextData> SelectedLE;
+            IEnumerable<BaseTextData> SelectedLE;
             if (currentGroup == AllRole)
             {
                 SelectedLE = textDataList;
             }
             else
             {
-                SelectedLE = from r in textDataList where r.qq == currentGroup select r;
+                SelectedLE = from r in textDataList where r.GroupID == currentGroup select r;
             }
             narratorcobj.SelectVoice(VoiceName);
             foreach (var item in SelectedLE)
@@ -570,7 +570,7 @@ namespace TextToSpeech
             }
             else
             {
-                newID = Regex.Replace(CurrentRoleDataList[Convert.ToInt32(Local_Number.Text)].SaveID, MiaoRegexTool.路径非法字符, "");//路径不支持的格式要自动和谐掉
+                newID = CurrentRoleDataList[Convert.ToInt32(Local_Number.Text)].SaveID;//路径不支持的格式要自动和谐掉
             }
             nAudioMicrophone.SetFilePath(VoicePath, newID);
             nAudioMicrophone.StartRec();
@@ -596,7 +596,7 @@ namespace TextToSpeech
             }
             else
             {
-                newID = Regex.Replace(CurrentRoleDataList[Convert.ToInt32(Local_Number.Text)].SaveID, MiaoRegexTool.路径非法字符, "");//路径不支持的格式要自动和谐掉
+                newID =CurrentRoleDataList[Convert.ToInt32(Local_Number.Text)].SaveID;//路径不支持的格式要自动和谐掉
             }
             nAudioSoundcard.SetFilePath(VoicePath, newID);
             nAudioSoundcard.StartRec();

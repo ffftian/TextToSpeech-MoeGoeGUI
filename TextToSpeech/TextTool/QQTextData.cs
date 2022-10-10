@@ -11,9 +11,8 @@ using System.Threading.Tasks;
 /// </summary>
 public class QQTextData : BaseTextData
 {
-    public override string PlayerID => qq;
+    public override string GroupID => qq;
     public string qq;
-    public string roleName;
 #if UNITY_EDITOR
     [TextArea]
 #endif
@@ -35,20 +34,20 @@ public class QQTextData : BaseTextData
             {
                 QQAndName = Regex.Match(SingleText, "\\([0-9]+\\)");//当没有用户名时，只提取QQ号
             }
-            roleName = QQAndName.Value.Split('(')[0];//提取用户名 
+            name = QQAndName.Value.Split('(')[0];//提取用户名 
 
             qq = QQAndName.Value?.Split('(')[1].Split(')')[0];//提取QQ号
 
-            string[] SingleConversation = Regex.Split(SingleText, "\\r\\n", RegexOptions.IgnoreCase);//QQ消息分开
-            for (int i = 0; i < SingleConversation.Length; i++)
+            string[] singleConversation = Regex.Split(SingleText, "\\r\\n", RegexOptions.IgnoreCase);//QQ消息分开
+            for (int i = 0; i < singleConversation.Length; i++)
             {
                 switch (i)
                 {
                     case 0:
-                        id = SingleConversation[i];//第一行为QQ消息ID
+                        id = singleConversation[i];//第一行为QQ消息ID
                         break;
                     default:
-                        log += SingleConversation[i] + "\n";//剩下的为log
+                        log += singleConversation[i] + "\n";//剩下的为log
                         break;
                 }
             }

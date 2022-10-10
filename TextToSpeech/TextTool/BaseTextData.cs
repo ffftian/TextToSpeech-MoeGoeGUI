@@ -15,7 +15,7 @@ abstract public class BaseTextData
             return Regex.Replace(id, MiaoRegexTool.路径非法字符, "");
         }
     }
-    abstract public string PlayerID { get; }
+    abstract public string GroupID { get; }
     public string id;
     public string name;
 #if UNITY_EDITOR
