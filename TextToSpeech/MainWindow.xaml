@@ -20,6 +20,9 @@
             <TabItem Header="MoeGoeTextToSpeech">
                 <local:MoeGoeTextToSpeechControl x:Name="MoeGoeTextToSpeech"/>
             </TabItem>
+            <!--<TabItem Header="外部语音库">
+                <local:ExternalTTSControl x:Name="ExternalTTSControl"/>
+            </TabItem>-->
         </TabControl>
     </Grid>
 </Window>

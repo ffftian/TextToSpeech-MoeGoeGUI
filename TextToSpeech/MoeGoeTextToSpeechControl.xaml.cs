@@ -91,7 +91,7 @@ namespace TextToSpeech
             set
             {
                 生成指定语音.IsEnabled = value;
-                //生成所有语音.IsEnabled = value;
+                生成所有语音.IsEnabled = value;
                 generateLock = value;
             }
         }
@@ -111,8 +111,8 @@ namespace TextToSpeech
 
             生成指定语音.Click += 生成指定语音_Click;
             生成指定语音.IsEnabled = false;
-            //生成所有语音.Click += 生成所有语音_Click;
-            //生成所有语音.IsEnabled = false;
+            生成所有语音.Click += 生成所有语音_Click;
+            生成所有语音.IsEnabled = false;
 
             启用语音生成控制台.Click += 启用语音生成控制台_Click;
             RateSlider.ValueChanged += RateSlider_ValueChanged;
@@ -136,11 +136,12 @@ namespace TextToSpeech
                 {
                     FileInfo fileInfo = new FileInfo(files[i]);
                     int index =  files[i].LastIndexOf(')');
-                    string path = files[i].Substring(0, index+1);
+                    string path = files[i].Substring(0, index+1)+".wav";
+                    if (path == files[i]) continue;
 
                     try
                     {
-                        fileInfo.MoveTo($"{path}.wav");
+                        fileInfo.MoveTo(path);
                     }
                     catch(Exception ee)
                     {
@@ -272,6 +273,8 @@ namespace TextToSpeech
         /// </summary>
         public void SerializableCasheData(string path)
         {
+            if (SpeakerTextData == null) return;
+
             BinaryFormatter formatter = new BinaryFormatter();
             FileStream stream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
             formatter.Serialize(stream, SpeakerTextData);
@@ -571,6 +574,8 @@ namespace TextToSpeech
         private void 生成所有语音_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("生成所有语音需要较长时间，请不要关闭窗口，生成完成时将有弹窗提示", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+            生成指定语音.IsEnabled = false;
+            生成所有语音.IsEnabled = false;
 
         }
 
