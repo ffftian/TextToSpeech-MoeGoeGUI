@@ -168,10 +168,12 @@
     <Compile Include="MoeGoeTextToSpeechControl.xaml.cs">
       <DependentUpon>MoeGoeTextToSpeechControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TextTTool\LinqTool.cs" />
-    <Compile Include="TextTTool\MiaoRegexTool.cs" />
-    <Compile Include="TextTTool\TextData.cs" />
-    <Compile Include="TextTTool\TextTool.cs" />
+    <Compile Include="LinqTool.cs" />
+    <Compile Include="TextTool\MiaoRegexTool.cs" />
+    <Compile Include="TextTool\QQTextData.cs" />
+    <Compile Include="TextTool\BaseTextData.cs" />
+    <Compile Include="TextTool\TextTool.cs" />
+    <Compile Include="TextTool\CommonTextData.cs" />
     <Compile Include="TTS\Narratorcs.cs" />
     <Compile Include="WaveInterface\IVisualizationPlugin.cs" />
     <Compile Include="WaveInterface\IWaveFormRenderer.cs" />
