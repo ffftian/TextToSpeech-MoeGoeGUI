@@ -19,8 +19,8 @@ public class CommonTextData : BaseTextData
             {
                 case 0:
                     string[] value=  Regex.Split(singleConversation[i], "\\(|\\)", RegexOptions.IgnoreCase);
-                    name = value[0];//第一行为QQ消息ID
-                    id = value[1];//第一行为QQ消息ID
+                    name = value[0];
+                    id = value[1];
                     break;
                 default:
                     log += singleConversation[i] + "\n";//剩下的为log

@@ -15,8 +15,17 @@ abstract public class BaseTextData
             return Regex.Replace(id, MiaoRegexTool.路径非法字符, "");
         }
     }
+    /// <summary>
+    /// 文本所在组ID
+    /// </summary>
     abstract public string GroupID { get; }
+    /// <summary>
+    /// 文本唯一ID
+    /// </summary>
     public string id;
+    /// <summary>
+    /// 说话角色
+    /// </summary>
     public string name;
 #if UNITY_EDITOR
     [TextArea]

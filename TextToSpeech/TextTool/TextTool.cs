@@ -4,20 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
-using static System.Net.Mime.MediaTypeNames;
-
+using System.Collections;
 
 public static class TextTool
 {
-    public static List<BaseTextData> LogSplit (string text, Action<Exception, string> error)
+    public static List<BaseTextData> LogSplit(string text, Action<Exception, string> error)
     {
-        if(IsQQLog(text))
+        if (IsQQLog(text))
         {
-            return QQLogSplit(text,error);
+            return QQLogSplit<BaseTextData>(text, error).ToList();
+            //return QQLogSplit(text, error);
         }
-        else if(IsCommonLog(text))
+        else if (IsCommonLog(text))
         {
-            return CommonLogSplit(text, error);
+            return CommonLogSplit<BaseTextData>(text, error).ToList();
         }
         return null;
     }
@@ -30,32 +30,29 @@ public static class TextTool
     {
         return Regex.IsMatch(text, "^(?=.+([0-9]+))");
     }
-
-    public static List<BaseTextData> QQLogSplit(string text, Action<Exception,string> error)
+    public static IEnumerable<T> QQLogSplit<T>(string text, Action<Exception, string> error) where T : BaseTextData
     {
-        string[] SingleConversation = Regex.Split(text, "(?=\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})");//这个靠零宽正向先行断言匹配了每一句话前是否是日期格式，问题在于必须跳过第一格。
-        List<BaseTextData> dataList = new List<BaseTextData>();
+        string[] SingleConversation = Regex.Split(text, "(?=\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})");
+        //List<BaseTextData> dataList = new List<BaseTextData>();
         for (int i = 1; i < SingleConversation.Length; i++)//略过第一行，第一行固定为空。
         {
             QQTextData txt = new QQTextData();
             txt.Analysis(SingleConversation[i], i, error);
-            dataList.Add(txt);
+            yield return txt as T;
         }
-        return dataList;
     }
-    public static List<BaseTextData> CommonLogSplit(string text, Action<Exception, string> error)
+
+    public static IEnumerable<T> CommonLogSplit<T>(string text, Action<Exception, string> error) where T : BaseTextData
     {
         string[] SingleConversation = Regex.Split(text, "\\r\\n\\r\\n");
         //string[] SingleConversation = Regex.Split(text, "(?=.?\\([0-9]+\\))");
 
-        List<BaseTextData> dataList = new List<BaseTextData>();
         for (int i = 1; i < SingleConversation.Length; i++)//略过第一行，第一行固定为空。
         {
             CommonTextData txt = new CommonTextData();
             txt.Analysis(SingleConversation[i], i, error);
-            dataList.Add(txt);
+            yield return txt as T;
         }
-        return dataList;
 
     }
 }
