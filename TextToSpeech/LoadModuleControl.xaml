@@ -27,7 +27,8 @@
         <TextBox Name="VoicePathBox" HorizontalAlignment="Left" FontSize="14" Margin="98,64,0,0"  TextWrapping="NoWrap" VerticalAlignment="Top" Width="579"/>
         <Button Name="BrowseButton2" Content="浏览" FontSize="14" Margin="692,63,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="42"/>
         <Label Content="语音保存位置" FontSize="14" HorizontalAlignment="Left" Margin="-1,64,0,0" VerticalAlignment="Top"/>
-
+        <CheckBox Name="文件夹路径包含角色名称" Content="文件夹路径包含角色名称" HorizontalAlignment="Left" Margin="6,97,0,0" VerticalAlignment="Top"/>
+        
         <Button Name="生成所有语音" Content="生成所有语音" HorizontalAlignment="Left" Margin="617,296,0,0" VerticalAlignment="Top" Width="117" Height="29" IsEnabled="False" />
         <Button Name="测试播放语音" Content="测试播放语音" HorizontalAlignment="Left" Margin="500,296,0,0" VerticalAlignment="Top" Width="117" Height="29" IsEnabled="False" />
         <Button Name="生成指定语音" Content="生成指定语音" HorizontalAlignment="Left" Margin="617,339,0,0" VerticalAlignment="Top" Width="117" Height="29" IsEnabled="False" />

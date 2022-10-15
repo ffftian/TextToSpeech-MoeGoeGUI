@@ -123,14 +123,20 @@ namespace TextToSpeech
             SpeakerText.TextChanged += SpeakerText_TextChanged;
 
             批量修改命名音频.Click += 批量修改命名音频_Click;
+            翻译成日文.Click += 翻译成日文_Click;
 
+        }
+        BaiduTranslation baiduTranslation = new BaiduTranslation();
+        private void 翻译成日文_Click(object sender, RoutedEventArgs e)
+        {
+            SpeakerText.Text =  baiduTranslation.GetTranslation(SpeakerTextData[LoadModuleControl.Local_Ptr]);
         }
 
         private void 批量修改命名音频_Click(object sender, RoutedEventArgs e)
         {
-            if(Directory.Exists(LoadModuleControl.VoicePath))
+            if(Directory.Exists(LoadModuleControl.VoiceSavePath))
             {
-                string[] files =  Directory.GetFiles(LoadModuleControl.VoicePath);
+                string[] files =  Directory.GetFiles(LoadModuleControl.VoiceSavePath);
 
                 for(int i=0;i< files.Length;i++)
                 {
@@ -461,12 +467,12 @@ namespace TextToSpeech
 
             if (CreateCount == 1)
             {
-                string savePath = System.IO.Path.Combine(LoadModuleControl.VoicePath, LoadModuleControl.GetRoleDialogueID + ".wav");
+                string savePath = System.IO.Path.Combine(LoadModuleControl.VoiceSavePath, LoadModuleControl.GetRoleDialogueID + ".wav");
                 CreateMoeGoeTTS(savePath);
             }
             else
             {
-                string saveFolder = System.IO.Path.Combine(LoadModuleControl.VoicePath, LoadModuleControl.GetRoleDialogueID);
+                string saveFolder = System.IO.Path.Combine(LoadModuleControl.VoiceSavePath, LoadModuleControl.GetRoleDialogueID);
                 CreateMultipleMoeGoeTTS(saveFolder, CreateCount);
             }
         }
@@ -484,7 +490,7 @@ namespace TextToSpeech
 
         private void MoeGoeTextToSpeechControl_OnGenerateComplete()
         {
-            string savePath = System.IO.Path.Combine(LoadModuleControl.VoicePath, LoadModuleControl.GetRoleDialogueID, $"{LoadModuleControl.GetRoleDialogueID}{CurrentCreateCount}.wav");
+            string savePath = System.IO.Path.Combine(LoadModuleControl.VoiceSavePath, LoadModuleControl.GetRoleDialogueID, $"{LoadModuleControl.GetRoleDialogueID}{CurrentCreateCount}.wav");
             CreateMoeGoeTTS(savePath);
             CurrentCreateCount++;
             if (CurrentCreateCount == CreateCount)

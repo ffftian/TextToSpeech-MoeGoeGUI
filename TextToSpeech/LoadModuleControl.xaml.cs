@@ -42,9 +42,40 @@ namespace TextToSpeech
         public string currentGroup;//玩家QQ号
         public string currentName;//玩家名字
 
+        public string VoiceSavePath
+        {
+            get
+            {
+                if(PathHasPlayerName)
+                {
+                    return $"{VoicePath}/{currentName}";
+                }
+                else
+                {
+                    return $"{VoicePath}";
+                }
+            }
+        }
+
         public string VoicePath { get { return VoicePathBox.Text; } set { VoicePathBox.Text = value; } }//语音保存地址
+
+
+
         public string VoiceName;//语音名字
         public string[] VoiceNameArray;//这条数组用于读取名称，因为我不懂TM如何把object转成正常的string，用 VoiceName = box.SelectedValue.tostring();转出来会多些东西，像是反射出的。
+
+
+        public bool PathHasPlayerName
+        {
+            get
+            {
+                return 文件夹路径包含角色名称.IsChecked.Value;
+            }
+            set
+            {
+                文件夹路径包含角色名称.IsChecked = value;
+            }
+        }
 
         public int Local_Ptr { get; set; }
 
@@ -99,10 +130,14 @@ namespace TextToSpeech
             SaveButton.Click += SaveClick;
             Local_Number.TextChanged += Local_Number_TextChanged;
 
-            
+
 
         }
 
+        private void 文件夹路径包含角色名称_Click(object sender, RoutedEventArgs e)
+        {
+           
+        }
 
         public void InitConfig()
         {
@@ -123,6 +158,7 @@ namespace TextToSpeech
                     VoiceName = Setting[4];
                     Number.Text = Setting[5];
                     Local_Number.Text = Setting[6];
+                    PathHasPlayerName = bool.Parse(Setting[7]);
                     StreamReader streamReader = new StreamReader(LogFilePath, Encoding.UTF8);
                     TextAnalysis(streamReader.ReadToEnd());
                     InitBoxItem();
@@ -134,7 +170,7 @@ namespace TextToSpeech
         }
         public void SaveConfig()
         {
-            string Conetents = $"{LogFilePath}\n{currentGroup}\n{currentName}\n{VoicePath}\n{VoiceName}\n{Number.Text}\n{Local_Number.Text}";
+            string Conetents = $"{LogFilePath}\n{currentGroup}\n{currentName}\n{VoicePath}\n{VoiceName}\n{Number.Text}\n{Local_Number.Text}\n{PathHasPlayerName}";
             File.WriteAllText(System.Windows.Forms.Application.StartupPath + 配置文件, Conetents, Encoding.UTF8);
         }
         public async void SaveClick(object sender, RoutedEventArgs e)
@@ -482,7 +518,7 @@ namespace TextToSpeech
         {
             string newID = GetRoleDialogueID;//路径不支持的格式要自动和谐掉
             string newLog = GetRoleDialogue;//@处理成at
-            narratorcobj.SaveToWave(VoicePath, newID, newLog);
+            narratorcobj.SaveToWave(VoiceSavePath, newID, newLog);
 
             // var newID = Regex.Replace(item.id, RegexTool.匹配路径非法字符, "");//路径不支持的格式要自动和谐掉
 
@@ -509,7 +545,7 @@ namespace TextToSpeech
             {
                 var newID = Regex.Replace(item.SaveID, MiaoRegexTool.路径非法字符, "");//路径不支持的格式名称要自动和谐掉
                 var newLog = item.log.Replace("@", "at");//@处理成at
-                narratorcobj.SaveToWave(VoicePath, newID, newLog);
+                narratorcobj.SaveToWave(VoiceSavePath, newID, newLog);
             }
         }
 
@@ -541,7 +577,7 @@ namespace TextToSpeech
 
         private bool RecordStatusCheck()
         {
-            if(Directory.Exists(VoicePath)&& File.Exists(LogFilePath))
+            if(Directory.Exists(VoiceSavePath) && File.Exists(LogFilePath))
             {
                 return true;
             }
@@ -572,7 +608,7 @@ namespace TextToSpeech
             {
                 newID = CurrentRoleDataList[Convert.ToInt32(Local_Number.Text)].SaveID;//路径不支持的格式要自动和谐掉
             }
-            nAudioMicrophone.SetFilePath(VoicePath, newID);
+            nAudioMicrophone.SetFilePath(VoiceSavePath, newID);
             nAudioMicrophone.StartRec();
             开始录音1.IsEnabled = false;
             开始录音2.IsEnabled = false;
@@ -598,7 +634,7 @@ namespace TextToSpeech
             {
                 newID =CurrentRoleDataList[Convert.ToInt32(Local_Number.Text)].SaveID;//路径不支持的格式要自动和谐掉
             }
-            nAudioSoundcard.SetFilePath(VoicePath, newID);
+            nAudioSoundcard.SetFilePath(VoiceSavePath, newID);
             nAudioSoundcard.StartRec();
             开始录音1.IsEnabled = false;
             开始录音2.IsEnabled = false;

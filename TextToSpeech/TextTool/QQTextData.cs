@@ -14,7 +14,7 @@ public class QQTextData : BaseTextData
     public override string GroupID => qq;
     public string qq;
 #if UNITY_EDITOR
-    [TextArea]
+    [UnityEngine.TextArea]
 #endif
     //public string log;
     public string time;

@@ -28,7 +28,7 @@ abstract public class BaseTextData
     /// </summary>
     public string name;
 #if UNITY_EDITOR
-    [TextArea]
+    [UnityEngine.TextArea]
 #endif
     public string log;
 

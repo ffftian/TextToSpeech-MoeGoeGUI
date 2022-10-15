@@ -46,6 +46,7 @@
         <TextBox x:Name ="DeviationInput" Text="1" FontSize="20" HorizontalAlignment="Left" Margin="122,200,0,0" VerticalAlignment="Top" Width="109"  HorizontalContentAlignment="Center" Height="30" IsEnabled="False" />
         <Slider x:Name="DeviationSlider" HorizontalAlignment="Left" Margin="236,206,0,0" VerticalAlignment="Top" Width="120" Maximum="1" LargeChange="0.05" SmallChange="0.01"/>
         <Button x:Name="批量修改命名音频" Content="批量修改命名音频" HorizontalAlignment="Left" Margin="474,369,0,0" VerticalAlignment="Top" Width="117" Height="28" />
+        <Button x:Name="翻译成日文" Content="翻译成日文" HorizontalAlignment="Left" Margin="348,0,0,0" VerticalAlignment="Center" Width="117" Height="28" />
 
 
     </Grid>
