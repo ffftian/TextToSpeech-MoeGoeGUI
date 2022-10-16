@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Newtonsoft.Json;
 
 namespace TextToSpeech
 {
@@ -71,7 +72,7 @@ namespace TextToSpeech
         private int CurrentCreateCount;
 
         /// <summary>
-        /// VITS，实际朗读者朗读数据
+        /// VITS，实际朗读者朗读用的数据
         /// </summary>
         public string[] SpeakerTextData;
         //public int Rate { get { return RateIuput} }
@@ -130,6 +131,9 @@ namespace TextToSpeech
         private void 翻译成日文_Click(object sender, RoutedEventArgs e)
         {
             SpeakerText.Text =  baiduTranslation.GetTranslation(SpeakerTextData[LoadModuleControl.Local_Ptr]);
+            SpeakerText.IsEnabled = false;
+            Task.Delay(1000);
+            SpeakerText.IsEnabled = true;
         }
 
         private void 批量修改命名音频_Click(object sender, RoutedEventArgs e)
@@ -281,10 +285,24 @@ namespace TextToSpeech
         {
             if (SpeakerTextData == null) return;
 
-            BinaryFormatter formatter = new BinaryFormatter();
-            FileStream stream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-            formatter.Serialize(stream, SpeakerTextData);
-            stream.Close();
+            string jsonData  =  JsonConvert.SerializeObject(SpeakerTextData,Formatting.Indented);
+            //var g =  JsonConvert.SerializeObject(SpeakerTextData);
+
+            //string jsonData = LitJson.JsonMapper.ToJson(SpeakerTextData);
+            FileStream fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite);
+            StreamWriter sw = new StreamWriter(fs,Encoding.UTF8);
+            sw.Write(jsonData);
+            sw.Flush();
+            sw.Close();
+            fs.Close();
+               
+
+            #region  以内置二进制序列化进行的保存
+            //BinaryFormatter formatter = new BinaryFormatter();
+            //FileStream stream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            //formatter.Serialize(stream, SpeakerTextData);
+            //stream.Close();
+            #endregion
 
         }
         /// <summary>
@@ -302,25 +320,55 @@ namespace TextToSpeech
             }
             else
             {
-                BinaryFormatter formatter = new BinaryFormatter();
-                FileStream stream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Read);
-                SpeakerTextData = (string[])formatter.Deserialize(stream);
-                stream.Close();
+                FileStream fs = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+                StreamReader sr = new StreamReader(fs);
+                SpeakerTextData = JsonConvert.DeserializeObject<string[]>(sr.ReadToEnd());
+                //SpeakerTextData = LitJson.JsonMapper.ToObject<string[]>(sr.ReadToEnd());
+                sr.Close();
+                fs.Close();
+                 
 
-            
-                if(SpeakerTextData.Length < LoadModuleControl.CurrentRoleDataList.Count)
+                if (SpeakerTextData.Length < LoadModuleControl.CurrentRoleDataList.Count)
                 {
-                    string []copyArray = new string[LoadModuleControl.CurrentRoleDataList.Count];
+                    string[] copyArray = new string[LoadModuleControl.CurrentRoleDataList.Count];
                     SpeakerTextData.CopyTo(copyArray, 0);
 
-                    for(int i= SpeakerTextData.Length; i< LoadModuleControl.CurrentRoleDataList.Count;i++)
+                    for (int i = SpeakerTextData.Length; i < LoadModuleControl.CurrentRoleDataList.Count; i++)
                     {
                         copyArray[i] = LoadModuleControl.CurrentRoleDataList[i].log;
                     }
                     SpeakerTextData = copyArray;
                 }
-
             }
+
+            #region 以内置二进制序列化进行的读取
+            //if (!File.Exists(path))
+            //{
+            //    SpeakerTextData = new string[LoadModuleControl.CurrentRoleDataList.Count];
+            //    for (int i = 0; i < SpeakerTextData.Length; i++)
+            //    {
+            //        SpeakerTextData[i] = LoadModuleControl.CurrentRoleDataList[i].log;
+            //    }
+            //}
+            //else
+            //{
+            //    BinaryFormatter formatter = new BinaryFormatter();
+            //    FileStream stream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Read);
+            //    SpeakerTextData = (string[])formatter.Deserialize(stream);
+            //    stream.Close();
+            //    if(SpeakerTextData.Length < LoadModuleControl.CurrentRoleDataList.Count)
+            //    {
+            //        string []copyArray = new string[LoadModuleControl.CurrentRoleDataList.Count];
+            //        SpeakerTextData.CopyTo(copyArray, 0);
+
+            //        for(int i= SpeakerTextData.Length; i< LoadModuleControl.CurrentRoleDataList.Count;i++)
+            //        {
+            //            copyArray[i] = LoadModuleControl.CurrentRoleDataList[i].log;
+            //        }
+            //        SpeakerTextData = copyArray;
+            //    }
+            //}
+            #endregion
         }
 
 

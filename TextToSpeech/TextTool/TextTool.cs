@@ -47,7 +47,7 @@ public static class TextTool
         string[] SingleConversation = Regex.Split(text, "\\r\\n\\r\\n");
         //string[] SingleConversation = Regex.Split(text, "(?=.?\\([0-9]+\\))");
 
-        for (int i = 1; i < SingleConversation.Length; i++)//略过第一行，第一行固定为空。
+        for (int i = 0; i < SingleConversation.Length; i++)
         {
             CommonTextData txt = new CommonTextData();
             txt.Analysis(SingleConversation[i], i, error);

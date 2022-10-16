@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 /// <summary>
 /// QQ文本类。
 /// </summary>
+[Serializable]
 public class QQTextData : BaseTextData
 {
     public override string GroupID => qq;
@@ -54,8 +55,7 @@ public class QQTextData : BaseTextData
         }
         catch (Exception e)
         {
-            error.Invoke(e, SingleText);
-            //throw new Exception($"错误的读取，序号{Serial}，输出原句:{SingleText}");
+            error.Invoke(e, $"错误的读取，序号{Serial}，输出原句:{SingleText}");
         }
     }
 }

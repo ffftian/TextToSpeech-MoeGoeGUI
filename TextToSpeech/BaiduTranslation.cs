@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +10,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Input;
-using LitJson;
 
 namespace TextToSpeech
 {
@@ -106,12 +107,20 @@ namespace TextToSpeech
             //if (DateTime.Now - datetime < Delay)
             //    Task.Delay(datetime + Delay - DateTime.Now).Wait();
             datetime = DateTime.Now;
-            var s = hc.GetStringAsync(url).Result;
+            //var s = hc.GetStringAsync(url).Result;
+            var data =  JsonConvert.DeserializeObject<JObject>(hc.GetStringAsync(url).Result);
 
-           JsonData datas = JsonMapper.ToObject(s);
-            JsonData res = datas["trans_result"][0]["dst"];
+            string text = "";
 
-            return res.ToString();
+            foreach(JObject obj  in data["trans_result"].Children())
+            {
+                text += $"{obj["dst"]}\n";
+            }
+
+            //JsonData datas = JsonMapper.ToObject(s);
+            // JsonData res = datas["trans_result"][0]["dst"];
+            return text;
+            //return res.ToString();
 
             //var r = System.Text.Json.JsonSerializer.Deserialize<TranslationResult>(s);
 

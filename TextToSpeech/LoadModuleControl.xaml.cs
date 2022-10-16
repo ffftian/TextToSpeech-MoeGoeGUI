@@ -543,7 +543,7 @@ namespace TextToSpeech
             narratorcobj.SelectVoice(VoiceName);
             foreach (var item in SelectedLE)
             {
-                var newID = Regex.Replace(item.SaveID, MiaoRegexTool.路径非法字符, "");//路径不支持的格式名称要自动和谐掉
+                var newID = item.SaveID;//路径不支持的格式名称要自动和谐掉
                 var newLog = item.log.Replace("@", "at");//@处理成at
                 narratorcobj.SaveToWave(VoiceSavePath, newID, newLog);
             }

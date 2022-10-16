@@ -12,26 +12,28 @@ public class CommonTextData : BaseTextData
 
     public override void Analysis(string paragraphText, int Serial, Action<Exception, string> error)
     {
-        string[] singleConversation = Regex.Split(paragraphText, "\\r\\n");
-        for (int i = 0; i < singleConversation.Length; i++)
+        try
         {
-            switch (i)
+            string[] singleConversation = Regex.Split(paragraphText, "\\r\\n");
+            for (int i = 0; i < singleConversation.Length; i++)
             {
-                case 0:
-                    string[] value=  Regex.Split(singleConversation[i], "\\(|\\)", RegexOptions.IgnoreCase);
-                    name = value[0];
-                    id = value[1];
-                    break;
-                default:
-                    log += singleConversation[i] + "\n";//剩下的为log
-                    break;
+                switch (i)
+                {
+                    case 0:
+                        string[] value = Regex.Split(singleConversation[i], "\\(|\\)", RegexOptions.IgnoreCase);
+                        name = value[0];
+                        id = $"{singleConversation[i]}({Serial})";
+                        break;
+                    default:
+                        log += singleConversation[i] + "\n";//剩下的为log
+                        break;
+                }
             }
         }
-        //string[] sp = Regex.Split(paragraphText, "(?<=.+([0-9]+))");
-
-        //id = Regex.Match(paragraphText, ".+([0-9]+)").Value;
-        //name = Regex.Match(id, "(?=\\()").Value;//匹配大括号
-
+        catch (Exception e)
+        {
+            error.Invoke(e, $"错误的读取，序号{Serial}，输出原句:{paragraphText}");
+        }
 
     }
 }
