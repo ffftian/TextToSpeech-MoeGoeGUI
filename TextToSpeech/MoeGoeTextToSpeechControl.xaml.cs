@@ -578,7 +578,7 @@ namespace TextToSpeech
         {
             CurrentCreateCount = 0;
             AllIndex = 0;
-            MoeGoeTextToSpeechControl_OnGenerateComplete();
+            MoeGoeTextToSpeechControl_AllOnGenerateComplete();
             OnGenerateComplete = MoeGoeTextToSpeechControl_AllOnGenerateComplete;
         }
         private void MoeGoeTextToSpeechControl_AllOnGenerateComplete()
@@ -601,8 +601,8 @@ namespace TextToSpeech
             }
             else
             {
-
                 CurrentCreateCount++;
+                生成所有语音.Content = $"{CurrentCreateCount}/{CreateCount}";
             }
             if(AllIndex == SpeakerTextData.Length)
             {
