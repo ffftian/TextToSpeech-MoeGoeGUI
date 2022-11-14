@@ -111,11 +111,11 @@ namespace TextToSpeech
             OpenConfig.Click += OpenConfig_Click;
 
             生成指定语音.Click += 生成指定语音_Click;
-            生成指定语音.IsEnabled = false;
             生成所有语音.Click += 生成所有语音_Click;
-            生成所有语音.IsEnabled = true;
 
             启用语音生成控制台.Click += 启用语音生成控制台_Click;
+            禁用语音生成控制台.Click += 禁用语音生成控制台_Click;
+
             RateSlider.ValueChanged += RateSlider_ValueChanged;
             CountSlider.ValueChanged += NumberSlider_ValueChanged;
             DeviationSlider.ValueChanged += DeviationSlider_ValueChanged;
@@ -127,6 +127,7 @@ namespace TextToSpeech
             翻译成日文.Click += 翻译成日文_Click;
 
         }
+
         BaiduTranslation baiduTranslation = new BaiduTranslation();
         private void 翻译成日文_Click(object sender, RoutedEventArgs e)
         {
@@ -402,16 +403,37 @@ namespace TextToSpeech
             cmd.Write(ModelPath);
             cmd.Write(ConfigPath);
             启用语音生成控制台.IsEnabled = false;
+            禁用语音生成控制台.IsEnabled = true;
             OpenEXE.IsEnabled = false;
             OpenModel.IsEnabled = false;
             OpenConfig.IsEnabled = false;
 
+
             生成指定语音.IsEnabled = true;
-            //生成所有语音.IsEnabled = true;
-            AnalyzeRole();
+            生成所有语音.IsEnabled = true;
+            AnalyzeRoles();
+        }
+        private void 禁用语音生成控制台_Click(object sender, RoutedEventArgs e)
+        {
+            cmd.process.Dispose();
+            cmd = null;
+
+            启用语音生成控制台.IsEnabled = true;
+            禁用语音生成控制台.IsEnabled = false;
+
+            OpenEXE.IsEnabled = true;
+            OpenModel.IsEnabled = true;
+            OpenConfig.IsEnabled = true;
+
+            AnalyzeRolesClear();
         }
 
-        private void AnalyzeRole()
+        private void AnalyzeRolesClear()
+        {
+            speakerBox.Items.Clear();
+        }
+
+        private void AnalyzeRoles()
         {
             string json = File.ReadAllText(ConfigPath);
             Match match = Regex.Match(json,

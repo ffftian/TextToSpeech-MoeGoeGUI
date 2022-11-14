@@ -26,7 +26,8 @@
         <TextBox x:Name ="CountInput" Text="1" FontSize="20" HorizontalAlignment="Left" Margin="438,170,0,0" VerticalAlignment="Top" Width="31"  HorizontalContentAlignment="Center" Height="30" IsEnabled="False" />
 
         <Button x:Name="启用语音生成控制台" Content="启用语音生成控制台" HorizontalAlignment="Left" Margin="10,112,0,0" VerticalAlignment="Top" Width="117" Height="28" />
-
+        <Button x:Name="禁用语音生成控制台" Content="禁用语音生成控制台" HorizontalAlignment="Left" Margin="132,112,0,0" VerticalAlignment="Top" Width="117" Height="28" IsEnabled="False" />
+        
         <Label Content="角色选择" FontSize="14" HorizontalAlignment="Left" Margin="12,145,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.485,0.214"/>
         <ComboBox Name="speakerBox" HorizontalAlignment="Left" Margin="82,145,0,0" VerticalAlignment="Top" Width="300" RenderTransformOrigin="0.6,-0.143"></ComboBox>
         <TextBox Name="Debug输出" HorizontalAlignment="Left" Height="91" Margin="0,234,0,0" TextWrapping="Wrap" Text="文字" VerticalAlignment="Top" Width="252" IsEnabled="False" />
@@ -49,7 +50,8 @@
         <Slider x:Name="DeviationSlider" HorizontalAlignment="Left" Margin="236,206,0,0" VerticalAlignment="Top" Width="120" Maximum="1" LargeChange="0.05" SmallChange="0.01"/>
         <Button x:Name="批量修改命名音频" Content="批量修改命名音频" HorizontalAlignment="Left" Margin="477,331,0,0" VerticalAlignment="Top" Width="117" Height="28" />
         <Button x:Name="翻译成日文" Content="翻译成日文" HorizontalAlignment="Left" Margin="348,331,0,0" VerticalAlignment="Top" Width="116" Height="28" />
-        
+     
+
 
 
     </Grid>
