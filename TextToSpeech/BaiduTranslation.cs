@@ -100,9 +100,6 @@ namespace TextToSpeech
 
 
             //var md5Sign = new string(md5.ComputeHash(System.Text.Encoding.UTF8.GetBytes(ID + source + randomNum + Key)) ;
-
-
-
             var url = $"{API_URL}?q={utf8}&from={from}&to={To}&appid={ID}&salt={randomNum}&sign={md5Sign}";
             //if (DateTime.Now - datetime < Delay)
             //    Task.Delay(datetime + Delay - DateTime.Now).Wait();
@@ -116,7 +113,7 @@ namespace TextToSpeech
             {
                 text += $"{obj["dst"]}\n";
             }
-
+            
             //JsonData datas = JsonMapper.ToObject(s);
             // JsonData res = datas["trans_result"][0]["dst"];
             return text;

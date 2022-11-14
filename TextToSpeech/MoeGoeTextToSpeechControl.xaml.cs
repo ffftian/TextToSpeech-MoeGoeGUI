@@ -564,14 +564,14 @@ namespace TextToSpeech
             生成指定语音.IsEnabled = false;
             生成所有语音.IsEnabled = false;
 
-            if (CreateCount == 1)
-            {
-
-            }
-            else
-            {
+            //if (CreateCount == 1)
+            //{
+                
+            //}
+            //else
+            //{
                 CreateAllMultipleMoeGoeTTS();
-            }
+            //}
         }
         private int AllIndex;
         public void CreateAllMultipleMoeGoeTTS()
@@ -581,7 +581,7 @@ namespace TextToSpeech
             MoeGoeTextToSpeechControl_AllOnGenerateComplete();
             OnGenerateComplete = MoeGoeTextToSpeechControl_AllOnGenerateComplete;
         }
-        private void MoeGoeTextToSpeechControl_AllOnGenerateComplete()
+        private async void MoeGoeTextToSpeechControl_AllOnGenerateComplete()
         {
             string saveID = LoadModuleControl.CurrentRoleDataList[AllIndex].SaveID;
             string saveFolder = System.IO.Path.Combine(LoadModuleControl.VoiceSavePath, saveID);
@@ -590,14 +590,22 @@ namespace TextToSpeech
                 Directory.CreateDirectory(saveFolder);
             }
             string savePath = System.IO.Path.Combine(LoadModuleControl.VoiceSavePath, saveID, $"{saveID}{CurrentCreateCount}.wav");
-           //这里可以加是否要预翻译 
+            //这里可以加是否要翻译成日文
+            //CheckBox
+
+            if ((bool)自动翻译成日文Toggle.IsChecked&& CurrentCreateCount==0)//需要改翻译位置
+            {
+                SpeakerTextData[AllIndex] = baiduTranslation.GetTranslation(SpeakerTextData[AllIndex]);
+                await Task.Delay(200);//自动翻译需要等待降低翻译频率
+            }
            CreateMoeGoeTTS(savePath, SpeakerTextData[AllIndex]);
 
 
-            if (CurrentCreateCount == CreateCount)
+            if (CurrentCreateCount-1 == CreateCount)
             {
                 AllIndex++;
-                CurrentCreateCount =0;
+                CurrentCreateCount = 0;
+                生成所有语音.Content = $"{CurrentCreateCount}/{CreateCount}";
             }
             else
             {
@@ -611,7 +619,7 @@ namespace TextToSpeech
                 生成所有语音.IsEnabled = true;
             }
         }
-
+        
 
         #endregion
 
@@ -622,18 +630,18 @@ namespace TextToSpeech
             switch (Pattern)
             {
                 case 0:
-                    TTS($"{RateLength}[ZH]{SpeakerText.Text}[ZH]");
+                    TTS($"{RateLength}[ZH]{text}[ZH]");
                     //TTS("[ZH]" + LoadModuleControl.GetRoleDialogue + "[ZH]");
                     break;
                 case 1:
-                    TTS($"{RateLength}[JA]{SpeakerText.Text}[JA]");
+                    TTS($"{RateLength}[JA]{text}[JA]");
                     //TTS("[JA]" + LoadModuleControl.GetRoleDialogue + "[JA]");
                     break;
                 case 2:
                     TTS($"{RateLength} {AnalysisLanguageText(text)}");
                     break;
                 case 3:
-                    TTS($"{RateLength}{SpeakerText.Text}");
+                    TTS($"{RateLength}{text}");
                     //TTS(LoadModuleControl.GetRoleDialogue);
                     break;
             }
