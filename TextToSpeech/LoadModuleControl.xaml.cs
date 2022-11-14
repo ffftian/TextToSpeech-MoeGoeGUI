@@ -223,6 +223,7 @@ namespace TextToSpeech
             if ((Convert.ToInt32(Local_Number.Text) + 1) < CurrentRoleDataList.Count)
             {
                 Local_Number.Text = (Convert.ToInt32(Local_Number.Text) + 1).ToString();
+                //ok
                 //处理显示Text(CurrentRoleDataList, 局部显示文本, Local_Number, Local_ID);
             }
         }

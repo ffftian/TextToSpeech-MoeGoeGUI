@@ -26,9 +26,11 @@ public class WaveInEventFloat : EventArgs
         this.samples = new float[samplesLength];
         for (int n = 0, t = 0; n < RecordLength; n += 2, t++)
         {
-            samples[t] = BitConverter.ToInt16(Buffer, n) / 32768f;
+            samples[t] = BitConverter.ToInt16
+                (Buffer, n) / 32768f;
         }
         #region 留作教训，wav格式并不是标准4位float存一格，而是2位float存一格
+        //因为这个格式是22050原因吧？
         //for (int i = 0, t = 0; i < RecordLength; i += 4, t++)
         //{
 
