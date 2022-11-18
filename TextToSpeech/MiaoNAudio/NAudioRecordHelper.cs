@@ -78,7 +78,7 @@ public class NAudioRecordSoundcard
     {
         wasapiLoopbackCapture = new WasapiLoopbackCapture();
         cacheFloat = new WaveInEventFloat(2);
-        wasapiLoopbackCapture.WaveFormat = new WaveFormat(24000,16,1);
+        wasapiLoopbackCapture.WaveFormat = new WaveFormat(44100,16,1);
         waveFile = new WaveFileWriter(filePath, wasapiLoopbackCapture.WaveFormat);
         
         wasapiLoopbackCapture.StartRecording();
@@ -139,7 +139,7 @@ public class NAudioRecorder
     public void StartRec()
     {
         waveSource = new WaveIn();
-        waveSource.WaveFormat = new WaveFormat(24000, 16, 1); // 24000rate,16bit,通道数
+        waveSource.WaveFormat = new WaveFormat(44100, 16, 1); // 24000rate,16bit,通道数
         //waveSource.WaveFormat = new WaveFormat(48000, 32, 1); // 24000rate,16bit,通道数
         cacheFloat = new WaveInEventFloat(1);
         //waveSource.WaveFormat = new WaveFormat(8000, 16, 2); // 24000rate,16bit,通道数
