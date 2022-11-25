@@ -156,6 +156,7 @@
     <Compile Include="ExternalTTSControl.xaml.cs">
       <DependentUpon>ExternalTTSControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FolderPicker.cs" />
     <Compile Include="LineWaveFormControl.xaml.cs">
       <DependentUpon>LineWaveFormControl.xaml</DependentUpon>
     </Compile>
@@ -170,6 +171,7 @@
       <DependentUpon>MoeGoeTextToSpeechControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="LinqTool.cs" />
+    <Compile Include="SpeakerText.cs" />
     <Compile Include="TextTool\MiaoRegexTool.cs" />
     <Compile Include="TextTool\QQTextData.cs" />
     <Compile Include="TextTool\BaseTextData.cs" />

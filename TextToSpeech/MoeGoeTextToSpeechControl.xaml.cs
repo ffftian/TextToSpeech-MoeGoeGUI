@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 
 namespace TextToSpeech
@@ -37,6 +38,10 @@ namespace TextToSpeech
         private string MoeGoePath { get { return EXEPathBox.Text; } set { EXEPathBox.Text = value; } }
         private string ModelPath { get { return ModelPathBox.Text; } set { ModelPathBox.Text = value; } }
         private string ConfigPath { get { return ConfigPathBox.Text; } set { ConfigPathBox.Text = value; } }
+        /// <summary>
+        /// 模型位置
+        /// </summary>
+        private string W2V2Path { get { return emotionalModelPath.Text; }set { emotionalModelPath.Text = value; } }
 
         public int Pattern { get { return PatternBox.SelectedIndex; } set { PatternBox.SelectedIndex = value; } }
 
@@ -54,7 +59,7 @@ namespace TextToSpeech
         {
             get
             {
-                return $"[LENGTH={RateSlider.Value + Deviation}]";//
+                return $"[LENGTH={RateSlider.Value + Deviation}]";
             }
         }
         private int CreateCount
@@ -71,10 +76,17 @@ namespace TextToSpeech
         }
         private int CurrentCreateCount;
 
-        /// <summary>
-        /// VITS，实际朗读者朗读用的数据
-        /// </summary>
-        public string[] SpeakerTextData;
+        public SpeakerText[] SpeakerTextData;
+        ///// <summary>
+        ///// VITS，实际朗读者朗读用的数据
+        ///// </summary>
+        //public string[] SpeakerTextData;
+        ///// <summary>
+        ///// 情感识别保存位置
+        ///// </summary>
+        //public string[] EmotionData;
+
+
         //public int Rate { get { return RateIuput} }
 
         public CommandLine cmd;
@@ -109,6 +121,8 @@ namespace TextToSpeech
             OpenEXE.Click += OpenMoeGoe_Click;
             OpenModel.Click += OpenModel_Click;
             OpenConfig.Click += OpenConfig_Click;
+            OpenEmotionalModel.Click += OpenEmotionalModel_Click;
+            OpenEmotionalData.Click += OpenEmotionalData_Click;
 
             生成指定语音.Click += 生成指定语音_Click;
             生成所有语音.Click += 生成所有语音_Click;
@@ -122,6 +136,7 @@ namespace TextToSpeech
             //RateIuput.TextChanged += RateIuput_TextChanged;
 
             SpeakerText.TextChanged += SpeakerText_TextChanged;
+            
 
             批量修改命名音频.Click += 批量修改命名音频_Click;
             翻译成日文.Click += 翻译成日文_Click;
@@ -131,7 +146,7 @@ namespace TextToSpeech
         BaiduTranslation baiduTranslation = new BaiduTranslation();
         private void 翻译成日文_Click(object sender, RoutedEventArgs e)
         {
-            SpeakerText.Text =  baiduTranslation.GetTranslation(SpeakerTextData[LoadModuleControl.Local_Ptr]);
+            SpeakerText.Text =  baiduTranslation.GetTranslation(SpeakerTextData[LoadModuleControl.Local_Ptr].SpeakerTextData);
             SpeakerText.IsEnabled = false;
             Task.Delay(1000);
             SpeakerText.IsEnabled = true;
@@ -212,7 +227,8 @@ namespace TextToSpeech
         /// <param name="e"></param>
         private void Local_Number_TextChanged(object sender, TextChangedEventArgs e)
         {
-            SpeakerText.Text = SpeakerTextData[LoadModuleControl.Local_Ptr];
+            SpeakerText.Text = SpeakerTextData[LoadModuleControl.Local_Ptr].SpeakerTextData;
+            emotionData.Text = SpeakerTextData[LoadModuleControl.Local_Ptr].EmotionSubName;
         }
 
         /// <summary>
@@ -223,7 +239,7 @@ namespace TextToSpeech
         private void SpeakerText_TextChanged(object sender, TextChangedEventArgs e)
         {
             ///文本内容更改赋值给保存数组
-            SpeakerTextData[LoadModuleControl.Local_Ptr] = SpeakerText.Text;
+            SpeakerTextData[LoadModuleControl.Local_Ptr].SpeakerTextData = SpeakerText.Text;
         }
 
         string SpeakerTextPath
@@ -286,17 +302,19 @@ namespace TextToSpeech
         {
             if (SpeakerTextData == null) return;
 
-            string jsonData  =  JsonConvert.SerializeObject(SpeakerTextData,Formatting.Indented);
+            
+
+            string textJsonData  =  JsonConvert.SerializeObject(SpeakerTextData,Formatting.Indented);
             //var g =  JsonConvert.SerializeObject(SpeakerTextData);
 
-            //string jsonData = LitJson.JsonMapper.ToJson(SpeakerTextData);
-            FileStream fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite);
-            StreamWriter sw = new StreamWriter(fs,Encoding.UTF8);
-            sw.Write(jsonData);
+            //string textJsonData = LitJson.JsonMapper.ToJson(SpeakerTextData);
+            //FileStream fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite);
+            TextWriter sw = new StreamWriter(path,false, Encoding.UTF8);
+            //JsonTextWriter jsonTextWriter = new JsonTextWriter(sw);
+            sw.Write(textJsonData);
             sw.Flush();
             sw.Close();
-            fs.Close();
-               
+            //fs.Close();
 
             #region  以内置二进制序列化进行的保存
             //BinaryFormatter formatter = new BinaryFormatter();
@@ -313,17 +331,20 @@ namespace TextToSpeech
         {
             if (!File.Exists(path))
             {
-                SpeakerTextData = new string[LoadModuleControl.CurrentRoleDataList.Count];
+                SpeakerTextData = new SpeakerText[LoadModuleControl.CurrentRoleDataList.Count];
                 for (int i = 0; i < SpeakerTextData.Length; i++)
                 {
-                    SpeakerTextData[i] = LoadModuleControl.CurrentRoleDataList[i].log;
+                    SpeakerTextData[i] = new SpeakerText();
+                    SpeakerTextData[i].SpeakerTextData = LoadModuleControl.CurrentRoleDataList[i].log;
                 }
             }
             else
             {
                 FileStream fs = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-                StreamReader sr = new StreamReader(fs);
-                SpeakerTextData = JsonConvert.DeserializeObject<string[]>(sr.ReadToEnd());
+                TextReader sr = new StreamReader(fs,Encoding.UTF8);
+                //jsonReader = new JsonTextReader(sr);
+                SpeakerTextData = JsonConvert.DeserializeObject<SpeakerText[]>(sr.ReadToEnd());
+
                 //SpeakerTextData = LitJson.JsonMapper.ToObject<string[]>(sr.ReadToEnd());
                 sr.Close();
                 fs.Close();
@@ -331,12 +352,13 @@ namespace TextToSpeech
 
                 if (SpeakerTextData.Length < LoadModuleControl.CurrentRoleDataList.Count)
                 {
-                    string[] copyArray = new string[LoadModuleControl.CurrentRoleDataList.Count];
+                    SpeakerText[] copyArray = new SpeakerText[LoadModuleControl.CurrentRoleDataList.Count];
                     SpeakerTextData.CopyTo(copyArray, 0);
 
                     for (int i = SpeakerTextData.Length; i < LoadModuleControl.CurrentRoleDataList.Count; i++)
                     {
-                        copyArray[i] = LoadModuleControl.CurrentRoleDataList[i].log;
+                        copyArray[i] = new SpeakerText();
+                        copyArray[i].SpeakerTextData = LoadModuleControl.CurrentRoleDataList[i].log;
                     }
                     SpeakerTextData = copyArray;
                 }
@@ -390,7 +412,7 @@ namespace TextToSpeech
         //    //}
         //}
         /// <summary>
-        /// 主要的语音合成启动
+        /// 主要的语音合成启动 GetStart()
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -399,9 +421,16 @@ namespace TextToSpeech
             cmd = new CommandLine();
             cmd.OutputHandler += Cmd_OutputHandler;
             cmd.ErrorHandler += Cmd_ErrorHandler;
-            cmd.Write("\"" + MoeGoePath + "\"");
+            //cmd.Write($"\"{MoeGoePath}\" --escape");
+            cmd.Write($"\"{MoeGoePath}\"");
             cmd.Write(ModelPath);
             cmd.Write(ConfigPath);
+            if (!string.IsNullOrEmpty(W2V2Path))
+            {
+                cmd.Write(W2V2Path);
+            }
+
+
             启用语音生成控制台.IsEnabled = false;
             禁用语音生成控制台.IsEnabled = true;
             OpenEXE.IsEnabled = false;
@@ -509,6 +538,7 @@ namespace TextToSpeech
                     CreateCount = int.Parse(Setting[5]);
                     DeviationInput.Text = Setting[6];
                     DeviationSlider.Value = double.Parse(Setting[6]);
+                    W2V2Path = Setting[7];
                 }
             }
             catch { }
@@ -516,7 +546,7 @@ namespace TextToSpeech
         }
         public void SaveConfig()
         {
-            string Conetents = $"{MoeGoePath}\n{ModelPath}\n{ConfigPath}\n{Pattern}\n{RateSlider.Value}\n{CreateCount}\n{DeviationSlider.Value}";
+            string Conetents = $"{MoeGoePath}\n{ModelPath}\n{ConfigPath}\n{Pattern}\n{RateSlider.Value}\n{CreateCount}\n{DeviationSlider.Value}\n{W2V2Path}";
             File.WriteAllText(System.Windows.Forms.Application.StartupPath + MoeGoe配置文件, Conetents, Encoding.UTF8);
         }
 
@@ -617,10 +647,10 @@ namespace TextToSpeech
 
             if ((bool)自动翻译成日文Toggle.IsChecked&& CurrentCreateCount==0)//需要改翻译位置
             {
-                SpeakerTextData[AllIndex] = baiduTranslation.GetTranslation(SpeakerTextData[AllIndex]);
+                SpeakerTextData[AllIndex].SpeakerTextData = baiduTranslation.GetTranslation(SpeakerTextData[AllIndex].SpeakerTextData);
                 await Task.Delay(200);//自动翻译需要等待降低翻译频率
             }
-           CreateMoeGoeTTS(savePath, SpeakerTextData[AllIndex]);
+           CreateMoeGoeTTS(savePath, SpeakerTextData[AllIndex].SpeakerTextData);
 
 
             if (CurrentCreateCount-1 == CreateCount)
@@ -653,20 +683,22 @@ namespace TextToSpeech
             {
                 case 0:
                     TTS($"{RateLength}[ZH]{text}[ZH]");
-                    //TTS("[ZH]" + LoadModuleControl.GetRoleDialogue + "[ZH]");
                     break;
                 case 1:
                     TTS($"{RateLength}[JA]{text}[JA]");
-                    //TTS("[JA]" + LoadModuleControl.GetRoleDialogue + "[JA]");
                     break;
                 case 2:
                     TTS($"{RateLength} {AnalysisLanguageText(text)}");
                     break;
                 case 3:
                     TTS($"{RateLength}{text}");
-                    //TTS(LoadModuleControl.GetRoleDialogue);
                     break;
             }
+            if(!string.IsNullOrEmpty(W2V2Path))//情感音频
+            {
+                cmd.Write(SpeakerTextData[LoadModuleControl.Local_Ptr].EmotionPath);
+            }
+
             cmd.Write(savePath);
             cmd.Write("y");//要有输出完成回调
             //SpeakerText.Text
@@ -757,18 +789,47 @@ namespace TextToSpeech
 
         private void OpenConfig_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog
+            OpenFileDialog ofd = new OpenFileDialog
             {
                 Filter = "配置文件|*.json"
             };
-            if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if ((bool)ofd.ShowDialog())
             {
                 ConfigPath = ofd.FileName;
                 AnalyzePath();
             }
-            ofd.Dispose();
         }
 
+        private void OpenEmotionalData_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog
+            {
+                Filter = "数据文件|*.npy|音频文件|*.wav;*.mp3;*.ogg;*.opus"
+            };
+            if((bool)ofd.ShowDialog())
+            {
+               emotionData.Text = SpeakerTextData[LoadModuleControl.Local_Ptr].EmotionPath = ofd.FileName;
+
+            }
+            ///获取文件夹位置
+            //FolderPicker folderPicker = new FolderPicker();
+            //if ((bool)folderPicker.ShowDialog())
+            //{
+            //    EmotionDataFolderPath = folderPicker.InputPath;
+            //}
+        }
+
+        private void OpenEmotionalModel_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog
+            {
+                Filter = "模型文件|model.onnx"
+            };
+            if ((bool)ofd.ShowDialog())
+            {
+                W2V2Path = ofd.FileName;
+            }
+        }
 
     }
 }
