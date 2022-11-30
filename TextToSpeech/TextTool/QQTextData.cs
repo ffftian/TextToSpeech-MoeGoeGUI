@@ -45,7 +45,7 @@ public class QQTextData : BaseTextData
                 switch (i)
                 {
                     case 0:
-                        id = singleConversation[i];//第一行为QQ消息ID
+                        textId = singleConversation[i];//第一行为QQ消息ID
                         break;
                     default:
                         log += singleConversation[i] + "\n";//剩下的为log

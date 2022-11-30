@@ -36,7 +36,7 @@ namespace TextToSpeech
 
 
 
-        public string LogFilePath { get { return TextBox.Text; }set { TextBox.Text = value; } }//日志保存地址
+        public string LogFilePath { get { return TextBox.Text; } set { TextBox.Text = value; } }//日志保存地址
         public string LogFileName;
 
         public string currentGroup;//玩家QQ号
@@ -46,7 +46,7 @@ namespace TextToSpeech
         {
             get
             {
-                if(PathHasPlayerName)
+                if (PathHasPlayerName)
                 {
                     return $"{VoicePath}/{currentName}";
                 }
@@ -83,7 +83,7 @@ namespace TextToSpeech
         public NAudioRecordSoundcard nAudioSoundcard;//电脑音频录制
 
         const string 配置文件 = "\\配置文件.txt";
-        const string AllRole = "所有角色";
+        public const string AllRole = "所有角色";
 
 
 
@@ -108,7 +108,7 @@ namespace TextToSpeech
             测试播放语音.Click += VoiceReciteTo;
             生成所有语音.Click += PlayerVoiceALLButtonClick;
             生成指定语音.Click += PlayerVoiceButtonClick;
-           
+
             //BrowseButton.Click += BoxClick;
             //BrowseButton2.Click += BoxClick;
             VoiceBoxList.SelectionChanged += BoxClick;
@@ -136,7 +136,7 @@ namespace TextToSpeech
 
         private void 文件夹路径包含角色名称_Click(object sender, RoutedEventArgs e)
         {
-           
+
         }
 
         public void InitConfig()
@@ -162,7 +162,7 @@ namespace TextToSpeech
                     StreamReader streamReader = new StreamReader(LogFilePath, Encoding.UTF8);
                     TextAnalysis(streamReader.ReadToEnd());
                     InitBoxItem();
-                    LogFileName = LogFilePath.Substring(LogFilePath.LastIndexOf('\\') + 1).Replace(".txt","");
+                    LogFileName = LogFilePath.Substring(LogFilePath.LastIndexOf('\\') + 1).Replace(".txt", "");
                 }
                 catch { }
             }
@@ -186,7 +186,7 @@ namespace TextToSpeech
 
         private void Local_Number_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if(Local_Number.Text.Length==0)
+            if (Local_Number.Text.Length == 0)
             {
                 return;
             }
@@ -231,7 +231,7 @@ namespace TextToSpeech
 
 
         #region 整体text查看
-         private void LeftClick(object sender, RoutedEventArgs e)
+        private void LeftClick(object sender, RoutedEventArgs e)
         {
             // Number.COU
 
@@ -262,7 +262,7 @@ namespace TextToSpeech
         /// <param name="e"></param>
         private void LocalListSelect(object sender, RoutedEventArgs e)
         {
-            if(currentGroup==AllRole)
+            if (currentGroup == AllRole)
             {
                 CurrentRoleDataList = textDataList;
             }
@@ -305,7 +305,7 @@ namespace TextToSpeech
         //        Number.Text = (CurrentDataList.Count).ToString();
         //        局部显示文本.Text = CurrentDataList[CurrentDataList.Count].log;
         //    }
-        //    Local_ID.Text = CurrentDataList[CurrentDataList.Count].id;
+        //    Local_ID.Text = CurrentDataList[CurrentDataList.Count].textId;
         //}
 
 
@@ -340,13 +340,13 @@ namespace TextToSpeech
                     //}
                     //else
                     //{
-                   
-                      if(PlayerBoxList.SelectedIndex< FirstQQNameArray.Length)
+
+                    if (PlayerBoxList.SelectedIndex < FirstQQNameArray.Length)
                     {
                         currentGroup = FirstQQNameArray[PlayerBoxList.SelectedIndex].GroupID;
                         currentName = FirstQQNameArray[PlayerBoxList.SelectedIndex].name;
                     }
-                       else
+                    else
                     {
                         currentGroup = AllRole;
                         currentName = AllRole;
@@ -370,9 +370,9 @@ namespace TextToSpeech
 
         public void InitBoxItem()
         {
-            foreach(ComboBoxItem item in PlayerBoxList.Items)
+            foreach (ComboBoxItem item in PlayerBoxList.Items)
             {
-                if($"{currentName}({currentGroup})"== item.Content.ToString())
+                if ($"{currentName}({currentGroup})" == item.Content.ToString())
                 {
                     PlayerBoxList.SelectedItem = item;
                     LocalListSelect(null, null);
@@ -396,7 +396,7 @@ namespace TextToSpeech
             foreach (var QQData in FirstQQNameArray)
             {
                 ComboBoxItem box = new ComboBoxItem();
-                box.Content = $"{QQData.name}({ QQData.GroupID})";
+                box.Content = $"{QQData.name}({QQData.GroupID})";
                 PlayerBoxList.Items.Add(box);
             }
             ComboBoxItem box2 = new ComboBoxItem();
@@ -407,10 +407,10 @@ namespace TextToSpeech
             处理显示Text(textDataList, 显示文本, Number, ID);
         }
         bool cancel = false;
-        void ErorrShow(Exception exception,string content)
+        void ErorrShow(Exception exception, string content)
         {
             if (cancel) return;
-            switch(MessageBox.Show(content, exception.Message,MessageBoxButton.OKCancel))
+            switch (MessageBox.Show(content, exception.Message, MessageBoxButton.OKCancel))
             {
                 case MessageBoxResult.Cancel:
                     cancel = true;
@@ -438,8 +438,8 @@ namespace TextToSpeech
                 LogFilePath = TextBox.Text = openFileDialog.FileName;//取得名称并输入到界面上。
 
                 #endregion
-            TextAnalysis(tempData);
-            Local_Number.Text = "0";
+                TextAnalysis(tempData);
+                Local_Number.Text = "0";
             }
             openFileDialog.Dispose();
 
@@ -451,9 +451,6 @@ namespace TextToSpeech
         {
             #region 让玩家选择保存声音的路径
             System.Windows.Forms.FolderBrowserDialog data = new System.Windows.Forms.FolderBrowserDialog();
-
-
-
             if (data.ShowDialog() == System.Windows.Forms.DialogResult.OK)//用于指示让文件夹展开对文件筐。
             {
                 VoicePath = data.SelectedPath;
@@ -521,7 +518,7 @@ namespace TextToSpeech
             string newLog = GetRoleDialogue;//@处理成at
             narratorcobj.SaveToWave(VoiceSavePath, newID, newLog);
 
-            // var newID = Regex.Replace(item.id, RegexTool.匹配路径非法字符, "");//路径不支持的格式要自动和谐掉
+            // var newID = Regex.Replace(item.textId, RegexTool.匹配路径非法字符, "");//路径不支持的格式要自动和谐掉
 
             //  narratorcobj.SaveToWave(VoicePath, newID, item.log);
         }
@@ -578,7 +575,7 @@ namespace TextToSpeech
 
         private bool RecordStatusCheck()
         {
-            if(Directory.Exists(VoiceSavePath) && File.Exists(LogFilePath))
+            if (Directory.Exists(VoiceSavePath) && File.Exists(LogFilePath))
             {
                 return true;
             }
@@ -616,7 +613,7 @@ namespace TextToSpeech
             停止录音.IsEnabled = true;
         }
 
-     
+
         /// <summary>
         /// 开始录制电脑内部声音
         /// </summary>
@@ -633,7 +630,7 @@ namespace TextToSpeech
             }
             else
             {
-                newID =CurrentRoleDataList[Convert.ToInt32(Local_Number.Text)].SaveID;//路径不支持的格式要自动和谐掉
+                newID = CurrentRoleDataList[Convert.ToInt32(Local_Number.Text)].SaveID;//路径不支持的格式要自动和谐掉
             }
             nAudioSoundcard.SetFilePath(VoiceSavePath, newID);
             nAudioSoundcard.StartRec();

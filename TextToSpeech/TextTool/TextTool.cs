@@ -28,7 +28,8 @@ public static class TextTool
     }
     public static bool IsCommonLog(string text)
     {
-        return Regex.IsMatch(text, "^(?=.+([0-9]+))");
+        return Regex.IsMatch(text, "^(?=.+([\u4e00-\u9fa5_a-zA-Z0-9]+))");
+        //return Regex.IsMatch(text, "^(?=.+([0-9]+))");
     }
     public static IEnumerable<T> QQLogSplit<T>(string text, Action<Exception, string> error) where T : BaseTextData
     {

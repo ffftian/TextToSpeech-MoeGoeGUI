@@ -12,17 +12,17 @@ abstract public class BaseTextData
     {
         get
         {
-            return Regex.Replace(id, MiaoRegexTool.路径非法字符, "");
+            return Regex.Replace(textId, MiaoRegexTool.路径非法字符, "");
         }
     }
     /// <summary>
-    /// 文本所在组ID
+    /// 文本所在组ID，还是拿这个当序号好了
     /// </summary>
     abstract public string GroupID { get; }
     /// <summary>
     /// 文本唯一ID
     /// </summary>
-    public string id;
+    public string textId;
     /// <summary>
     /// 说话角色
     /// </summary>

@@ -41,7 +41,7 @@ namespace TextToSpeech
         /// <summary>
         /// 模型位置
         /// </summary>
-        private string W2V2Path { get { return emotionalModelPath.Text; }set { emotionalModelPath.Text = value; } }
+        private string W2V2Path { get { return emotionalModelPath.Text; } set { emotionalModelPath.Text = value; } }
 
         public int Pattern { get { return PatternBox.SelectedIndex; } set { PatternBox.SelectedIndex = value; } }
 
@@ -136,7 +136,7 @@ namespace TextToSpeech
             //RateIuput.TextChanged += RateIuput_TextChanged;
 
             SpeakerText.TextChanged += SpeakerText_TextChanged;
-            
+
 
             批量修改命名音频.Click += 批量修改命名音频_Click;
             翻译成日文.Click += 翻译成日文_Click;
@@ -146,7 +146,7 @@ namespace TextToSpeech
         BaiduTranslation baiduTranslation = new BaiduTranslation();
         private void 翻译成日文_Click(object sender, RoutedEventArgs e)
         {
-            SpeakerText.Text =  baiduTranslation.GetTranslation(SpeakerTextData[LoadModuleControl.Local_Ptr].SpeakerTextData);
+            SpeakerText.Text = baiduTranslation.GetTranslation(SpeakerTextData[LoadModuleControl.Local_Ptr].SpeakerTextData);
             SpeakerText.IsEnabled = false;
             Task.Delay(1000);
             SpeakerText.IsEnabled = true;
@@ -154,38 +154,34 @@ namespace TextToSpeech
 
         private void 批量修改命名音频_Click(object sender, RoutedEventArgs e)
         {
-            if(Directory.Exists(LoadModuleControl.VoiceSavePath))
+            if (Directory.Exists(LoadModuleControl.VoiceSavePath))
             {
-                string[] files =  Directory.GetFiles(LoadModuleControl.VoiceSavePath);
+                string[] files = Directory.GetFiles(LoadModuleControl.VoiceSavePath);
 
-                for(int i=0;i< files.Length;i++)
+                for (int i = 0; i < files.Length; i++)
                 {
                     FileInfo fileInfo = new FileInfo(files[i]);
-                    int index =  files[i].LastIndexOf(')');
-                    string path = files[i].Substring(0, index+1)+".wav";
+                    int index = files[i].LastIndexOf(')');
+                    string path = files[i].Substring(0, index + 1) + ".wav";
                     if (path == files[i]) continue;
 
                     try
                     {
                         fileInfo.MoveTo(path);
                     }
-                    catch(Exception ee)
+                    catch (Exception ee)
                     {
                         MessageBox.Show(ee.Message, "失败", MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
-                   
+
                 }
                 MessageBox.Show("命名整合完成");
             }
             else
             {
-                MessageBox.Show("命名失败","失败",MessageBoxButton.OK,MessageBoxImage.Error);
+                MessageBox.Show("命名失败", "失败", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-
-           
-
         }
 
         private void DeviationSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -263,7 +259,7 @@ namespace TextToSpeech
         private void PlayerBoxList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (((ComboBox)sender).Items.Count == 0) return;
-            
+
 
             int index = e.RemovedItems.Count;
             string lastName = null;
@@ -302,14 +298,14 @@ namespace TextToSpeech
         {
             if (SpeakerTextData == null) return;
 
-            
 
-            string textJsonData  =  JsonConvert.SerializeObject(SpeakerTextData,Formatting.Indented);
+
+            string textJsonData = JsonConvert.SerializeObject(SpeakerTextData, Formatting.Indented);
             //var g =  JsonConvert.SerializeObject(SpeakerTextData);
 
             //string textJsonData = LitJson.JsonMapper.ToJson(SpeakerTextData);
             //FileStream fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite);
-            TextWriter sw = new StreamWriter(path,false, Encoding.UTF8);
+            TextWriter sw = new StreamWriter(path, false, Encoding.UTF8);
             //JsonTextWriter jsonTextWriter = new JsonTextWriter(sw);
             sw.Write(textJsonData);
             sw.Flush();
@@ -341,14 +337,13 @@ namespace TextToSpeech
             else
             {
                 FileStream fs = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-                TextReader sr = new StreamReader(fs,Encoding.UTF8);
+                TextReader sr = new StreamReader(fs, Encoding.UTF8);
                 //jsonReader = new JsonTextReader(sr);
                 SpeakerTextData = JsonConvert.DeserializeObject<SpeakerText[]>(sr.ReadToEnd());
 
                 //SpeakerTextData = LitJson.JsonMapper.ToObject<string[]>(sr.ReadToEnd());
                 sr.Close();
                 fs.Close();
-                 
 
                 if (SpeakerTextData.Length < LoadModuleControl.CurrentRoleDataList.Count)
                 {
@@ -440,7 +435,7 @@ namespace TextToSpeech
 
             生成指定语音.IsEnabled = true;
             生成所有语音.IsEnabled = true;
-            AnalyzeRoles();
+            AnalyzeSpeakersToBox();//AnalyzeSpeakers
         }
         private void 禁用语音生成控制台_Click(object sender, RoutedEventArgs e)
         {
@@ -461,8 +456,28 @@ namespace TextToSpeech
         {
             speakerBox.Items.Clear();
         }
+        private List<string> AnalyzeSpeakers()
+        {
 
-        private void AnalyzeRoles()
+            string json = File.ReadAllText(ConfigPath);
+            Match match = Regex.Match(json,
+               "\"speakers\"\\s*:\\s*\\[((?:\\s*\"(?:(?:\\\\.)|[^\\\\\"])*\"\\s*,?\\s*)*)\\]");
+            List<string> datas = new List<string>();
+            if (match.Success)
+            {
+                MatchCollection matches = Regex.Matches(match.Groups[1].Value,
+                    "\"((?:(?:\\\\.)|[^\\\\\"])*)\"");
+                if (matches.Count > 0)
+                {
+                    for (int i = 0; i < matches.Count; i++)
+                    {
+                        datas.Add(Regex.Unescape(matches[i].Groups[1].Value));
+                    }
+                }
+            }
+            return datas;
+        }
+        private void AnalyzeSpeakersToBox()
         {
             string json = File.ReadAllText(ConfigPath);
             Match match = Regex.Match(json,
@@ -568,7 +583,7 @@ namespace TextToSpeech
             if (CreateCount == 1)
             {
                 string savePath = System.IO.Path.Combine(LoadModuleControl.VoiceSavePath, LoadModuleControl.GetRoleDialogueID + ".wav");
-                CreateMoeGoeTTS(savePath, SpeakerText.Text);
+                CreateMoeGoeTTS(savePath, SpeakerText.Text, speakerBox.SelectedIndex.ToString());
             }
             else
             {
@@ -590,7 +605,7 @@ namespace TextToSpeech
         private void MoeGoeTextToSpeechControl_OnGenerateComplete()
         {
             string savePath = System.IO.Path.Combine(LoadModuleControl.VoiceSavePath, LoadModuleControl.GetRoleDialogueID, $"{LoadModuleControl.GetRoleDialogueID}{CurrentCreateCount}.wav");
-            CreateMoeGoeTTS(savePath, SpeakerText.Text);
+            CreateMoeGoeTTS(savePath, SpeakerText.Text, speakerBox.SelectedIndex.ToString());
             CurrentCreateCount++;
             if (CurrentCreateCount == CreateCount)
             {
@@ -604,29 +619,178 @@ namespace TextToSpeech
                 生成指定语音.IsEnabled = false;
             }
         }
+        private Dictionary<string,int> ValidGroupID(List<string> speakers)
+        {
+            Dictionary<string,int> useTarget = new Dictionary<string,int>();
+            for (int i = 0; i < LoadModuleControl.textDataList.Count; i++)
+            {
+                if (!useTarget.ContainsKey(LoadModuleControl.textDataList[i].GroupID))
+                {
+
+                    for(int j=0;j< speakers.Count;j++)
+                    {
+                        if(speakers[j] == LoadModuleControl.textDataList[i].GroupID)
+                        {
+                            useTarget.Add(speakers[j], j);
+                        }
+                    }
+                }
+            }
+            return useTarget;
+        }
+        /// <summary>
+        /// 可匹配到的角色
+        /// </summary>
+        Dictionary<string,int> useTarget;
         #region 生成该角色所有语音部分
         private void 生成所有语音_Click(object sender, RoutedEventArgs e)
         {
-            if (speakerBox.SelectedIndex == -1)
+            if (启用语音生成控制台.IsEnabled)
             {
-                MessageBox.Show("还没有选择朗读者");
+                MessageBox.Show("还没有启用控制台");
                 return;
             }
-            MessageBox.Show("生成所有语音需要较长时间，该项会覆盖已生成该角色语音，生成请不要关闭窗口", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
-            生成指定语音.IsEnabled = false;
-            生成所有语音.IsEnabled = false;
 
-            //if (CreateCount == 1)
-            //{
-                
-            //}
-            //else
-            //{
-                CreateAllMultipleMoeGoeTTS();
-            //}
+            if (LoadModuleControl.currentGroup == LoadModuleControl.AllRole)
+            {
+                string matching = string.Empty;
+                useTarget = ValidGroupID(AnalyzeSpeakers());
+                foreach (var data in useTarget)
+                {
+                    matching += $"{data}\n";
+                }
+                MessageBox.Show("生成所有角色会根据GroupID进行匹配\n以下为文本检索到的角色\n" +
+                matching, "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                生成指定语音.IsEnabled = false;
+                生成所有语音.IsEnabled = false;
+                if(CreateCount==1)
+                {
+                    CreateAllSpeakerTextMoeGoeTTS();
+                }
+                else
+                {
+                    CreateAllSpeakerAllTextMoeGoeTTS();
+                }
+            }
+            else
+            {
+                if (speakerBox.SelectedIndex == -1)
+                {
+                    MessageBox.Show("还没有选择朗读者");
+                    return;
+                }
+                MessageBox.Show("生成所有语音需要较长时间，该项会覆盖已生成该角色语音，生成请不要关闭窗口", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                生成指定语音.IsEnabled = false;
+                生成所有语音.IsEnabled = false;
+                //if (CreateCount == 1)
+                //{
+
+                //}
+                //else
+                //{
+                CreateSpeakerAllTextMultipleMoeGoeTTS();
+                //}
+            }
         }
         private int AllIndex;
-        public void CreateAllMultipleMoeGoeTTS()
+        #region 对照角色id和朗读者创建所有的tts
+        public void CreateAllSpeakerTextMoeGoeTTS()
+        {
+            AllIndex = 0;
+            CreateAllSpeakerTextMoeGoeTTSComplete();
+            OnGenerateComplete = CreateAllSpeakerTextMoeGoeTTSComplete;
+        }
+        async void CreateAllSpeakerTextMoeGoeTTSComplete()
+        {
+            BaseTextData textData = LoadModuleControl.CurrentRoleDataList[AllIndex];
+            string saveID = textData.SaveID;
+            string savePath = System.IO.Path.Combine(LoadModuleControl.VoiceSavePath, $"{saveID}.wav");
+            if ((bool)自动翻译成日文Toggle.IsChecked)
+            {
+                SpeakerTextData[AllIndex].SpeakerTextData = baiduTranslation.GetTranslation(SpeakerTextData[AllIndex].SpeakerTextData);
+                await Task.Delay(200);//自动翻译需要等待降低翻译频率
+            }
+            int index;
+            if (useTarget.TryGetValue(textData.GroupID, out index))
+            {
+                CreateMoeGoeTTS(savePath, SpeakerTextData[AllIndex].SpeakerTextData, index.ToString());
+                AllIndex++;
+                生成所有语音.Content = saveID;
+                if (AllIndex == SpeakerTextData.Length)
+                {
+                    生成所有语音.Content = "生成所有语音";
+                    OnGenerateComplete -= MoeGoeTextToSpeechControl_AllOnGenerateComplete;
+                    生成所有语音.IsEnabled = true;
+                    return;
+                }
+            }
+            else
+            {
+                AllIndex++;
+                CreateAllSpeakerTextMoeGoeTTSComplete();
+            }
+        }
+
+        /// <summary>
+        /// 基于文本中所有角色创建所有的MoeGoeTTS
+        /// </summary>
+        public void CreateAllSpeakerAllTextMoeGoeTTS()
+        {
+            CurrentCreateCount = 0;
+            AllIndex = 0;
+            MoeGoeTextToSpeechControlAllMultipleTextToSpeakerGenerateComplete();
+            OnGenerateComplete = MoeGoeTextToSpeechControlAllMultipleTextToSpeakerGenerateComplete;
+        }
+        public async void MoeGoeTextToSpeechControlAllMultipleTextToSpeakerGenerateComplete()
+        {
+            BaseTextData textData = LoadModuleControl.CurrentRoleDataList[AllIndex];
+            string saveID = textData.SaveID;
+            string saveFolder = System.IO.Path.Combine(LoadModuleControl.VoiceSavePath, saveID);
+            if (!Directory.Exists(saveFolder))
+            {
+                Directory.CreateDirectory(saveFolder);
+            }
+            string savePath = System.IO.Path.Combine(LoadModuleControl.VoiceSavePath, saveID, $"{saveID}{CurrentCreateCount}.wav");
+            if ((bool)自动翻译成日文Toggle.IsChecked && CurrentCreateCount == 0)//需要改翻译位置
+            {
+                SpeakerTextData[AllIndex].SpeakerTextData = baiduTranslation.GetTranslation(SpeakerTextData[AllIndex].SpeakerTextData);
+                await Task.Delay(200);//自动翻译需要等待降低翻译频率
+            }
+            int index;
+            if (useTarget.TryGetValue(textData.GroupID,out index))
+            {
+                CreateMoeGoeTTS(savePath, SpeakerTextData[AllIndex].SpeakerTextData, index.ToString());
+                if (CurrentCreateCount - 1 == CreateCount)
+                {
+                    AllIndex++;
+                    CurrentCreateCount = 0;
+                    生成所有语音.Content = $"{CurrentCreateCount}/{CreateCount}";
+                }
+                else
+                {
+                    CurrentCreateCount++;
+                    生成所有语音.Content = $"{CurrentCreateCount}/{CreateCount}";
+                }
+                if (AllIndex == SpeakerTextData.Length)
+                {
+                    生成所有语音.Content = "生成所有语音";
+                    OnGenerateComplete -= MoeGoeTextToSpeechControl_AllOnGenerateComplete;
+                    生成所有语音.IsEnabled = true;
+                    return;
+                }
+            }
+           else
+            {
+                AllIndex++;
+                MoeGoeTextToSpeechControlAllMultipleTextToSpeakerGenerateComplete();
+            }
+            //
+
+        }
+        /// <summary>
+        /// 创建选中角色的MoeTTS
+        /// </summary>
+        public void CreateSpeakerAllTextMultipleMoeGoeTTS()
         {
             CurrentCreateCount = 0;
             AllIndex = 0;
@@ -643,17 +807,16 @@ namespace TextToSpeech
             }
             string savePath = System.IO.Path.Combine(LoadModuleControl.VoiceSavePath, saveID, $"{saveID}{CurrentCreateCount}.wav");
             //这里可以加是否要翻译成日文
-            //CheckBox
 
-            if ((bool)自动翻译成日文Toggle.IsChecked&& CurrentCreateCount==0)//需要改翻译位置
+            if ((bool)自动翻译成日文Toggle.IsChecked && CurrentCreateCount == 0)//需要改翻译位置
             {
                 SpeakerTextData[AllIndex].SpeakerTextData = baiduTranslation.GetTranslation(SpeakerTextData[AllIndex].SpeakerTextData);
                 await Task.Delay(200);//自动翻译需要等待降低翻译频率
             }
-           CreateMoeGoeTTS(savePath, SpeakerTextData[AllIndex].SpeakerTextData);
+            CreateMoeGoeTTS(savePath, SpeakerTextData[AllIndex].SpeakerTextData, speakerBox.SelectedIndex.ToString());
 
 
-            if (CurrentCreateCount-1 == CreateCount)
+            if (CurrentCreateCount - 1 == CreateCount)
             {
                 AllIndex++;
                 CurrentCreateCount = 0;
@@ -664,44 +827,44 @@ namespace TextToSpeech
                 CurrentCreateCount++;
                 生成所有语音.Content = $"{CurrentCreateCount}/{CreateCount}";
             }
-            if(AllIndex == SpeakerTextData.Length)
+            if (AllIndex == SpeakerTextData.Length)
             {
                 生成所有语音.Content = "生成所有语音";
                 OnGenerateComplete -= MoeGoeTextToSpeechControl_AllOnGenerateComplete;
                 生成所有语音.IsEnabled = true;
             }
         }
-        
+        #endregion
 
         #endregion
 
 
-        public void CreateMoeGoeTTS(string savePath,string text)
+        public void CreateMoeGoeTTS(string savePath, string text, string speakerNumber)
         {
             GenerateComplete = false;
             switch (Pattern)
             {
                 case 0:
-                    TTS($"{RateLength}[ZH]{text}[ZH]");
+                    TTS($"{RateLength}[ZH]{text}[ZH]", speakerNumber);
                     break;
                 case 1:
-                    TTS($"{RateLength}[JA]{text}[JA]");
+                    TTS($"{RateLength}[JA]{text}[JA]", speakerNumber);
                     break;
                 case 2:
-                    TTS($"{RateLength} {AnalysisLanguageText(text)}");
+                    TTS($"{RateLength} {AnalysisLanguageText(text)}", speakerNumber);
                     break;
                 case 3:
-                    TTS($"{RateLength}{text}");
+                    TTS($"{RateLength}{text}", speakerNumber);
                     break;
             }
-            if(!string.IsNullOrEmpty(W2V2Path))//情感音频
+            if (!string.IsNullOrEmpty(W2V2Path))//情感音频
             {
                 cmd.Write(SpeakerTextData[LoadModuleControl.Local_Ptr].EmotionPath);
             }
 
             cmd.Write(savePath);
             cmd.Write("y");//要有输出完成回调
-            //SpeakerText.Text
+
         }
 
         private string AnalysisLanguageText(string text)
@@ -746,7 +909,13 @@ namespace TextToSpeech
 
 
         }
-
+        private void TTS(string text,string speaker)
+        {
+            cmd.Write("t");
+            cmd.Write(Regex.Replace(text, @"\r?\n", " "));
+            //cmd.Write("0");//说话人
+            cmd.Write(speaker);//说话人
+        }
         private void TTS(string text)
         {
             cmd.Write("t");
@@ -806,9 +975,9 @@ namespace TextToSpeech
             {
                 Filter = "数据文件|*.npy|音频文件|*.wav;*.mp3;*.ogg;*.opus"
             };
-            if((bool)ofd.ShowDialog())
+            if ((bool)ofd.ShowDialog())
             {
-               emotionData.Text = SpeakerTextData[LoadModuleControl.Local_Ptr].EmotionPath = ofd.FileName;
+                emotionData.Text = SpeakerTextData[LoadModuleControl.Local_Ptr].EmotionPath = ofd.FileName;
 
             }
             ///获取文件夹位置

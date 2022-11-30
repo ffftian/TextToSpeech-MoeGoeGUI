@@ -8,7 +8,9 @@ using System.Threading.Tasks;
 [Serializable]
 public class CommonTextData : BaseTextData
 {
-    public override string GroupID => name;
+    public override string GroupID => groupID;
+    public string groupID;
+    //public override string GroupID => name;
 
     public override void Analysis(string paragraphText, int Serial, Action<Exception, string> error)
     {
@@ -22,7 +24,8 @@ public class CommonTextData : BaseTextData
                     case 0:
                         string[] value = Regex.Split(singleConversation[i], "\\(|\\)", RegexOptions.IgnoreCase);
                         name = value[0];
-                        id = $"{singleConversation[i]}({Serial})";
+                        groupID = value[1];
+                        textId = $"{singleConversation[i]}({Serial})";
                         break;
                     default:
                         log += singleConversation[i] + "\n";//剩下的为log
