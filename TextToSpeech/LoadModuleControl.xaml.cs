@@ -186,7 +186,7 @@ namespace TextToSpeech
 
         private void Local_Number_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (Local_Number.Text.Length == 0)
+            if (Local_Number.Text.Length == 0|| CurrentRoleDataList==null)
             {
                 return;
             }

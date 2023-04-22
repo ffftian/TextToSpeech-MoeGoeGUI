@@ -31,6 +31,8 @@
         <Button x:Name="启用语音生成控制台" Content="启用语音生成控制台" HorizontalAlignment="Left" Margin="14,157,0,0" VerticalAlignment="Top" Width="117" Height="28" />
         <Button x:Name="禁用语音生成控制台" Content="禁用语音生成控制台" HorizontalAlignment="Left" Margin="136,157,0,0" VerticalAlignment="Top" Width="117" Height="28" IsEnabled="False" />
 
+        <Button x:Name="导入朗读文本" Content="导入朗读文本" HorizontalAlignment="Left" Margin="226,376,0,0" VerticalAlignment="Top" Width="116" Height="28" />
+
         <Label Content="角色选择" FontSize="14" HorizontalAlignment="Left" Margin="16,190,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.485,0.214"/>
         <ComboBox Name="speakerBox" HorizontalAlignment="Left" Margin="86,190,0,0" VerticalAlignment="Top" Width="300" RenderTransformOrigin="0.6,-0.143"></ComboBox>
         <TextBox Name="Debug输出" HorizontalAlignment="Left" Height="91" Margin="4,279,0,0" TextWrapping="WrapWithOverflow" Text="文字" VerticalAlignment="Top" Width="252" IsEnabled="False" AcceptsReturn="True"/>

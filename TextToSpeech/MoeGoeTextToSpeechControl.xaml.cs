@@ -152,6 +152,18 @@ namespace TextToSpeech
             SpeakerText.IsEnabled = true;
         }
 
+        private void 导入翻译()
+        {
+            OpenFileDialog ofd = new OpenFileDialog
+            {
+                Filter = "配置文件|*.txt"
+            };
+            if ((bool)ofd.ShowDialog())
+            {
+                
+            }
+        }
+
         private void 批量修改命名音频_Click(object sender, RoutedEventArgs e)
         {
             if (Directory.Exists(LoadModuleControl.VoiceSavePath))
@@ -223,6 +235,7 @@ namespace TextToSpeech
         /// <param name="e"></param>
         private void Local_Number_TextChanged(object sender, TextChangedEventArgs e)
         {
+            if (SpeakerTextData == null) return;
             SpeakerText.Text = SpeakerTextData[LoadModuleControl.Local_Ptr].SpeakerTextData;
             emotionData.Text = SpeakerTextData[LoadModuleControl.Local_Ptr].EmotionSubName;
         }
@@ -416,8 +429,8 @@ namespace TextToSpeech
             cmd = new CommandLine();
             cmd.OutputHandler += Cmd_OutputHandler;
             cmd.ErrorHandler += Cmd_ErrorHandler;
-            //cmd.Write($"\"{MoeGoePath}\" --escape");
-            cmd.Write($"\"{MoeGoePath}\"");
+            cmd.Write($"\"{MoeGoePath}\" --escape");
+            //cmd.Write($"\"{MoeGoePath}\"");
             cmd.Write(ModelPath);
             cmd.Write(ConfigPath);
             if (!string.IsNullOrEmpty(W2V2Path))
@@ -571,7 +584,7 @@ namespace TextToSpeech
             SerializableCasheData(SpeakerTextPath);
         }
 
-        #region 生成语音部分
+        #region 生成单个语音
         private void 生成指定语音_Click(object sender, RoutedEventArgs e)
         {
             if (speakerBox.SelectedIndex == -1)
@@ -582,6 +595,7 @@ namespace TextToSpeech
 
             if (CreateCount == 1)
             {
+                Directory.CreateDirectory(LoadModuleControl.VoiceSavePath);
                 string savePath = System.IO.Path.Combine(LoadModuleControl.VoiceSavePath, LoadModuleControl.GetRoleDialogueID + ".wav");
                 CreateMoeGoeTTS(savePath, SpeakerText.Text, speakerBox.SelectedIndex.ToString());
             }
@@ -598,11 +612,11 @@ namespace TextToSpeech
                 Directory.CreateDirectory(saveFolder);
             }
             CurrentCreateCount = 0;
-            MoeGoeTextToSpeechControl_OnGenerateComplete();
-            OnGenerateComplete = MoeGoeTextToSpeechControl_OnGenerateComplete;
+            MutipleGenerateComplete();
+            OnGenerateComplete = MutipleGenerateComplete;
         }
 
-        private void MoeGoeTextToSpeechControl_OnGenerateComplete()
+        private void MutipleGenerateComplete()
         {
             string savePath = System.IO.Path.Combine(LoadModuleControl.VoiceSavePath, LoadModuleControl.GetRoleDialogueID, $"{LoadModuleControl.GetRoleDialogueID}{CurrentCreateCount}.wav");
             CreateMoeGoeTTS(savePath, SpeakerText.Text, speakerBox.SelectedIndex.ToString());
@@ -610,7 +624,7 @@ namespace TextToSpeech
             if (CurrentCreateCount == CreateCount)
             {
                 生成指定语音.Content = "生成指定语音";
-                OnGenerateComplete -= MoeGoeTextToSpeechControl_OnGenerateComplete;
+                OnGenerateComplete -= MutipleGenerateComplete;
                 生成指定语音.IsEnabled = true;
             }
             else
@@ -619,6 +633,8 @@ namespace TextToSpeech
                 生成指定语音.IsEnabled = false;
             }
         }
+#endregion
+        #region 生成该角色所有语音
         private Dictionary<string,int> ValidGroupID(List<string> speakers)
         {
             Dictionary<string,int> useTarget = new Dictionary<string,int>();
@@ -642,7 +658,6 @@ namespace TextToSpeech
         /// 可匹配到的角色
         /// </summary>
         Dictionary<string,int> useTarget;
-        #region 生成该角色所有语音部分
         private void 生成所有语音_Click(object sender, RoutedEventArgs e)
         {
             if (启用语音生成控制台.IsEnabled)
@@ -682,18 +697,19 @@ namespace TextToSpeech
                 MessageBox.Show("生成所有语音需要较长时间，该项会覆盖已生成该角色语音，生成请不要关闭窗口", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
                 生成指定语音.IsEnabled = false;
                 生成所有语音.IsEnabled = false;
-                //if (CreateCount == 1)
-                //{
-
-                //}
-                //else
-                //{
-                CreateSpeakerAllTextMultipleMoeGoeTTS();
-                //}
+                if (CreateCount == 1)
+                {
+                    Directory.CreateDirectory(LoadModuleControl.VoiceSavePath);
+                    CreateSpeakerAllTextMoeGoeTTS();
+                }
+                else
+                {
+                    CreateSpeakerAllTextMultipleMoeGoeTTS();
+                }
             }
         }
         private int AllIndex;
-        #region 对照角色id和朗读者创建所有的tts
+        #region 对照角色id和朗读者创建所有的语音
         public void CreateAllSpeakerTextMoeGoeTTS()
         {
             AllIndex = 0;
@@ -703,6 +719,7 @@ namespace TextToSpeech
         async void CreateAllSpeakerTextMoeGoeTTSComplete()
         {
             BaseTextData textData = LoadModuleControl.CurrentRoleDataList[AllIndex];
+            Directory.CreateDirectory(LoadModuleControl.VoiceSavePath);
             string saveID = textData.SaveID;
             string savePath = System.IO.Path.Combine(LoadModuleControl.VoiceSavePath, $"{saveID}.wav");
             if ((bool)自动翻译成日文Toggle.IsChecked)
@@ -719,7 +736,7 @@ namespace TextToSpeech
                 if (AllIndex == SpeakerTextData.Length)
                 {
                     生成所有语音.Content = "生成所有语音";
-                    OnGenerateComplete -= MoeGoeTextToSpeechControl_AllOnGenerateComplete;
+                    OnGenerateComplete -= AllTextMultipleGenerateComplete;
                     生成所有语音.IsEnabled = true;
                     return;
                 }
@@ -774,7 +791,7 @@ namespace TextToSpeech
                 if (AllIndex == SpeakerTextData.Length)
                 {
                     生成所有语音.Content = "生成所有语音";
-                    OnGenerateComplete -= MoeGoeTextToSpeechControl_AllOnGenerateComplete;
+                    OnGenerateComplete -= AllTextMultipleGenerateComplete;
                     生成所有语音.IsEnabled = true;
                     return;
                 }
@@ -785,7 +802,35 @@ namespace TextToSpeech
                 MoeGoeTextToSpeechControlAllMultipleTextToSpeakerGenerateComplete();
             }
             //
+        }
 
+        public void CreateSpeakerAllTextMoeGoeTTS()
+        {
+            AllIndex = 0;
+            CreateSpeakerAllOnGenerateComplete();
+            OnGenerateComplete = CreateSpeakerAllOnGenerateComplete;
+
+        }
+        private async void CreateSpeakerAllOnGenerateComplete()
+        {
+            string saveID = LoadModuleControl.CurrentRoleDataList[AllIndex].SaveID;
+            string savePath = System.IO.Path.Combine(LoadModuleControl.VoiceSavePath, $"{saveID}.wav");
+            //这里可以加是否要翻译成日文
+
+            if ((bool)自动翻译成日文Toggle.IsChecked && CurrentCreateCount == 0)//需要改翻译位置
+            {
+                SpeakerTextData[AllIndex].SpeakerTextData = baiduTranslation.GetTranslation(SpeakerTextData[AllIndex].SpeakerTextData);
+                await Task.Delay(200);//自动翻译需要等待降低翻译频率
+            }
+            CreateMoeGoeTTS(savePath, SpeakerTextData[AllIndex].SpeakerTextData, speakerBox.SelectedIndex.ToString());
+            AllIndex++;
+            生成所有语音.Content = saveID;
+            if (AllIndex == SpeakerTextData.Length)
+            {
+                生成所有语音.Content = "生成所有语音";
+                OnGenerateComplete -= AllTextMultipleGenerateComplete;
+                生成所有语音.IsEnabled = true;
+            }
         }
         /// <summary>
         /// 创建选中角色的MoeTTS
@@ -794,10 +839,10 @@ namespace TextToSpeech
         {
             CurrentCreateCount = 0;
             AllIndex = 0;
-            MoeGoeTextToSpeechControl_AllOnGenerateComplete();
-            OnGenerateComplete = MoeGoeTextToSpeechControl_AllOnGenerateComplete;
+            AllTextMultipleGenerateComplete();
+            OnGenerateComplete = AllTextMultipleGenerateComplete;
         }
-        private async void MoeGoeTextToSpeechControl_AllOnGenerateComplete()
+        private async void AllTextMultipleGenerateComplete()
         {
             string saveID = LoadModuleControl.CurrentRoleDataList[AllIndex].SaveID;
             string saveFolder = System.IO.Path.Combine(LoadModuleControl.VoiceSavePath, saveID);
@@ -830,12 +875,10 @@ namespace TextToSpeech
             if (AllIndex == SpeakerTextData.Length)
             {
                 生成所有语音.Content = "生成所有语音";
-                OnGenerateComplete -= MoeGoeTextToSpeechControl_AllOnGenerateComplete;
+                OnGenerateComplete -= AllTextMultipleGenerateComplete;
                 生成所有语音.IsEnabled = true;
             }
         }
-        #endregion
-
         #endregion
 
 
